@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Based on https://github.com/trinitronx/qemu-raspbian
+
+mkdir -p mnt
+mkdir -p boot
+
+sudo mount -o rw,loop,offset=8388608 ./rasbocrate.img mnt
+
+echo -e 'otg_mode=0\ndtoverlay=dwc2' | sudo tee -a mnt/config.txt >/dev/null
+dtc -q -I dtb -O dts -o boot/bcm2711-rpi-4-b.dts mnt/bcm2711-rpi-4-b.dtb
+patch -p1 <<'EOF'
+--- a/boot/bcm2711-rpi-4-b.dts	2025-07-19 12:45:55.474766594 -0600
++++ b/boot/bcm2711-rpi-4-b.dts	2025-07-19 12:46:18.567997783 -0600
+@@ -1482,7 +1482,7 @@
+ 			phy-names = "usb2-phy";
+ 			power-domains = <0x10 0x06>;
+ 			interrupt-names = "usb", "soft";
+-			status = "disabled";
++			status = "okay";
+ 			phandle = <0xc5>;
+ 		};
+EOF
+dtc -q -I dts -O dtb -o boot/bcm2711-rpi-4-b.mod.dtb boot/bcm2711-rpi-4-b.dts
+
+cp mnt/kernel8.img boot/
+sudo umount mnt
+
+args=(
+  # HW setup
+  -machine raspi4b
+  -cpu cortex-a72
+  -m 2G
+  -smp 4
+
+  # Boot options
+  -dtb boot/bcm2711-rpi-4-b.mod.dtb
+  -kernel boot/kernel8.img
+  -append "rw earlyprintk loglevel=8 console=ttyAMA1,115200 console=tty1
+              coherent_pool=1M 8250.nr_uarts=0
+              snd_bcm2835.enable_headphones=1 snd_bcm2835.enable_hdmi=1
+              bcm2708_fb.fbwidth=720 bcm2708_fb.fbheight=480
+              bcm2708_fb.fbdepth=16 bcm2708_fb.fbswap=1 vc_mem.mem_base=0x3f000000
+              vc_mem.mem_size=0x3f600000 dwc_otg.lpm_enable=0
+              root=/dev/mmcblk1p2 rootfstype=ext4 rootdelay=1 fsck.repair=yes
+              verbosity=2 net.ifnames=0"
+
+  # Storage
+  -drive "if=sd,file=rasbocrate.img,format=raw"
+
+  # Peripherals
+  -usb
+  -device usb-mouse
+  -device usb-kbd
+
+  # Networking
+  -netdev "user,id=net0,hostfwd=tcp::2222-:22"
+  -device "usb-net,netdev=net0"
+
+  # Display and input
+  -monitor stdio
+  -display gtk
+)
+
+qemu-system-aarch64 "${args[@]}"
