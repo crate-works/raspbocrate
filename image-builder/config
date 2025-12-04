@@ -1,7 +1,6 @@
 IMG_NAME="raspocrate"
 PI_GEN_RELEASE="Raspocrate"
-# FIXME do this so we get caching
-# APT_PROXY="http://
+APT_PROXY="http://localhost:3142"
 DEPLOY_COMPRESSION=none
 LOCALE_DEFAULT=en_AU.UTF-8
 TARGET_HOSTNAME=raspocrate
