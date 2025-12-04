@@ -1,6 +1,6 @@
 IMG_NAME="raspocrate"
 PI_GEN_RELEASE="Raspocrate"
-APT_PROXY="http://localhost:3142"
+APT_PROXY="http://172.17.0.1:3142"
 DEPLOY_COMPRESSION=none
 LOCALE_DEFAULT=en_AU.UTF-8
 TARGET_HOSTNAME=raspocrate

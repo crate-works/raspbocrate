@@ -13,10 +13,12 @@ fi
 rm -rf pi-gen/our-stage
 cp -ar our-stage pi-gen
 
-docker run -d -p 3142:3142 --name apt-cacher-ng \
-  -v tmp/apt-cache:/var/cache/apt-cacher-ng \
+docker run --rm -d -p 3142:3142 --name apt-cacher-ng \
+  -v ./tmp/apt-cache:/var/cache/apt-cacher-ng \
   sameersbn/apt-cacher-ng
 
 sudo pi-gen/build-docker.sh -c config
 
 cp pi-gen/deploy/*lite.img rasbocrate.img
+
+docker stop apt-cacher-ng
