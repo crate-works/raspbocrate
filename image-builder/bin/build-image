@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [ ! -d pi-gen ]; then
+  git clone --depth 1 --branch arm64 https://github.com/RPI-Distro/pi-gen.git
+fi
+
+rm -rf pi-gen/our-stage
+cp -ar our-stage pi-gen
+
+sudo pi-gen/build-docker.sh -c config
+
+cp pi-gen/deploy/*lite.img rasbocrate.img

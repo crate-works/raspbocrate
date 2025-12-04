@@ -1,0 +1,9 @@
+IMG_NAME="raspocrate"
+PI_GEN_RELEASE="Raspocrate"
+# FIXME do this so we get caching
+# APT_PROXY="http://
+DEPLOY_COMPRESSION=none
+LOCALE_DEFAULT=en_AU.UTF-8
+TARGET_HOSTNAME=raspocrate
+TIMEZONE_DEFAULT="Australia/Sydney"
+STAGE_LIST="stage0 stage1 stage2 our-stage"
