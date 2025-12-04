@@ -4,13 +4,13 @@ set -e
 
 # Based on https://github.com/trinitronx/qemu-raspbian
 
-mkdir -p mnt
-mkdir -p boot
+mkdir -p tmp/mnt
+mkdir -p tmp/boot
 
-sudo mount -o rw,loop,offset=8388608 ./rasbocrate.img mnt
+sudo mount -o rw,loop,offset=8388608 ./rasbocrate.img tmp/mnt
 
-echo -e 'otg_mode=0\ndtoverlay=dwc2' | sudo tee -a mnt/config.txt >/dev/null
-dtc -q -I dtb -O dts -o boot/bcm2711-rpi-4-b.dts mnt/bcm2711-rpi-4-b.dtb
+echo -e 'otg_mode=0\ndtoverlay=dwc2' | sudo tee -a tmp/mnt/config.txt >/dev/null
+dtc -q -I dtb -O dts -o tmp/boot/bcm2711-rpi-4-b.dts mnt/bcm2711-rpi-4-b.dtb
 patch -p1 <<'EOF'
 --- a/boot/bcm2711-rpi-4-b.dts	2025-07-19 12:45:55.474766594 -0600
 +++ b/boot/bcm2711-rpi-4-b.dts	2025-07-19 12:46:18.567997783 -0600
@@ -23,10 +23,10 @@ patch -p1 <<'EOF'
  			phandle = <0xc5>;
  		};
 EOF
-dtc -q -I dts -O dtb -o boot/bcm2711-rpi-4-b.mod.dtb boot/bcm2711-rpi-4-b.dts
+dtc -q -I dts -O dtb -o tmp/boot/bcm2711-rpi-4-b.mod.dtb tmp/boot/bcm2711-rpi-4-b.dts
 
-cp mnt/kernel8.img boot/
-sudo umount mnt
+cp tmp/mnt/kernel8.img tmp/boot/
+sudo umount tmp/mnt
 
 args=(
   # HW setup
@@ -36,8 +36,8 @@ args=(
   -smp 4
 
   # Boot options
-  -dtb boot/bcm2711-rpi-4-b.mod.dtb
-  -kernel boot/kernel8.img
+  -dtb tmp/boot/bcm2711-rpi-4-b.mod.dtb
+  -kernel tmp/boot/kernel8.img
   -append "rw earlyprintk loglevel=8 console=ttyAMA1,115200 console=tty1
               coherent_pool=1M 8250.nr_uarts=0
               snd_bcm2835.enable_headphones=1 snd_bcm2835.enable_hdmi=1
