@@ -2,7 +2,7 @@
 
 ## Admin interface
 
-- A basic fastify app
+- A basic hono app
 - Will run in a docker container
 - It's job is to configure docker on the Pi
 - It will have the following features

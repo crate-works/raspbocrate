@@ -1,20 +1,52 @@
 #!/usr/bin/env bash
 
+# Based on https://github.com/trinitronx/qemu-raspbian
+# Last merged at commit 15ca56e: Merge pull request #1 from trinitronx/fix-img-size
+
 set -e
 
-# Based on https://github.com/trinitronx/qemu-raspbian
+function cleanup() {
+  sudo umount /dev/nbd0p1 &>/dev/null || true
+  sudo umount /dev/nbd0p2 &>/dev/null || true
+  sudo qemu-nbd --disconnect /dev/nbd0 &>/dev/null || true
+}
 
-mkdir -p tmp/mnt
+function exit_handler() {
+  echo "Exiting, cleaning up..."
+
+  cleanup
+
+  # rm -rf tmp/mnt tmp/boot
+}
+trap "exit_handler" INT TERM ERR
+
+# Prepare mount points
+mkdir -p tmp/mnt/boot
+mkdir -p tmp/mnt/root
 mkdir -p tmp/boot
 
-sudo mount -o rw,loop,offset=8388608 ./rasbocrate.img tmp/mnt
+# Prepare the image
+cd deploy
+qemu-img convert -f raw -O qcow2 -o compression_type=zstd ./2*.img raspbocrate.qcow2
+qemu-img resize ./raspbocrate.qcow2 4G # NOTE: adjust size as needed
+sudo qemu-nbd -c /dev/nbd0 ./raspbocrate.qcow2
+echo ',+' | sudo sfdisk -N2 /dev/nbd0 # Resize partition 2 to fill the disk
+sudo e2fsck -f /dev/nbd0p2
+sudo resize2fs /dev/nbd0p2
+cd -
 
-echo -e 'otg_mode=0\ndtoverlay=dwc2' | sudo tee -a tmp/mnt/config.txt >/dev/null
-dtc -q -I dtb -O dts -o tmp/boot/bcm2711-rpi-4-b.dts mnt/bcm2711-rpi-4-b.dtb
+# Modify the image
+sudo mount -t vfat /dev/nbd0p1 tmp/mnt/boot
+sudo mount -t ext4 /dev/nbd0p2 tmp/mnt/root
+
+# Patch things so they work with qemu
+echo "WatchdogDevice=/dev/wacthdog666" | sudo tee -a tmp/mnt/root/etc/systemd/system.conf
+echo -e 'otg_mode=0\ndtoverlay=dwc2' | sudo tee -a tmp/mnt/boot/config.txt >/dev/null
+dtc -q -I dtb -O dts -o tmp/boot/bcm2711-rpi-4-b.dts tmp/mnt/boot/bcm2711-rpi-4-b.dtb
 patch -p1 <<'EOF'
---- a/boot/bcm2711-rpi-4-b.dts	2025-07-19 12:45:55.474766594 -0600
-+++ b/boot/bcm2711-rpi-4-b.dts	2025-07-19 12:46:18.567997783 -0600
-@@ -1482,7 +1482,7 @@
+--- a/tmp/boot/bcm2711-rpi-4-b.dts	2025-07-19 12:45:55.474766594 -0600
++++ b/tmp/boot/bcm2711-rpi-4-b.dts	2025-07-19 12:46:18.567997783 -0600
+@@ -1482,7 +1486,7 @@
  			phy-names = "usb2-phy";
  			power-domains = <0x10 0x06>;
  			interrupt-names = "usb", "soft";
@@ -25,13 +57,16 @@ patch -p1 <<'EOF'
 EOF
 dtc -q -I dts -O dtb -o tmp/boot/bcm2711-rpi-4-b.mod.dtb tmp/boot/bcm2711-rpi-4-b.dts
 
-cp tmp/mnt/kernel8.img tmp/boot/
-sudo umount tmp/mnt
+cp tmp/mnt/boot/kernel8.img tmp/boot/
+
+cleanup
+
+# Run QEMU
 
 args=(
   # HW setup
   -machine raspi4b
-  -cpu cortex-a72
+  #-cpu cortex-a72
   -m 2G
   -smp 4
 
@@ -45,19 +80,29 @@ args=(
               bcm2708_fb.fbdepth=16 bcm2708_fb.fbswap=1 vc_mem.mem_base=0x3f000000
               vc_mem.mem_size=0x3f600000 dwc_otg.lpm_enable=0
               root=/dev/mmcblk1p2 rootfstype=ext4 rootdelay=1 fsck.repair=yes
-              verbosity=2 net.ifnames=0"
+              verbosity=2 net.ifnames=0 panic=10 oops=panic"
 
   # Storage
-  -drive "if=sd,file=rasbocrate.img,format=raw"
+  -blockdev '{"driver":"file","filename":"'"deploy/raspbocrate.qcow2"'","node-name":"libvirt-2-storage","auto-read-only":true,"discard":"unmap"}'
+  -blockdev '{"node-name":"libvirt-2-format","read-only":false,"discard":"unmap","driver":"qcow2","file":"libvirt-2-storage","backing":null, "detect-zeroes":"unmap"}'
+  -device '{"driver":"sd-card","drive":"libvirt-2-format","id":"virtio-disk0"}'
 
   # Peripherals
   -usb
   -device usb-mouse
   -device usb-kbd
+  -device '{"driver":"usb-audio","id":"sound0"}'
 
   # Networking
+  # Port forward
   -netdev "user,id=net0,hostfwd=tcp::2222-:22"
+  # Bridged via libvirt virbr0 (must be created manually)
+  #-netdev "bridge,id=net0,br=virbr0,helper=/usr/lib/qemu/qemu-bridge-helper"
   -device "usb-net,netdev=net0"
+
+  # Serial output to terminal stdout & logfile
+  # -chardev "stdio,id=char0,logfile=/tmp/qemu-serial.log,signal=off"
+  # -serial chardev:char0
 
   # Display and input
   -monitor stdio

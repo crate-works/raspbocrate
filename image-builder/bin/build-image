@@ -2,6 +2,13 @@
 
 set -e
 
+function exit_handler() {
+  echo "Exiting, cleaning up..."
+  docker stop apt-cacher-ng
+}
+
+trap "exit_handler" INT TERM ERR
+
 if [ ! -d pi-gen ]; then
   git clone --depth 1 --branch arm64 https://github.com/RPI-Distro/pi-gen.git
 else
@@ -17,8 +24,10 @@ docker run --rm -d -p 3142:3142 --name apt-cacher-ng \
   -v ./tmp/apt-cache:/var/cache/apt-cacher-ng \
   sameersbn/apt-cacher-ng
 
-sudo pi-gen/build-docker.sh -c config
+if [ "$1" = "continue" ]; then
+  sudo CONTINUE=1 pi-gen/build-docker.sh -c config
+else
+  sudo pi-gen/build-docker.sh -c config
+fi
 
 cp pi-gen/deploy/*lite.img rasbocrate.img
-
-docker stop apt-cacher-ng
