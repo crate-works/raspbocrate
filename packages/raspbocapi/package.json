@@ -1,0 +1,30 @@
+{
+  "name": "raspbocapi",
+  "version": "1.0.0",
+  "description": "RO-Crate API endpoint for raspbocrate",
+  "main": "app.js",
+  "type": "module",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "@opensearch-project/opensearch": "^3.5.1",
+    "@prisma/adapter-mariadb": "^7.1.0",
+    "@prisma/client": "^7.1.0",
+    "arocapi": "^1.2.2",
+    "dotenv": "^17.2.3",
+    "fastify": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.2",
+    "fastify-cli": "^7.4.1",
+    "prisma": "^7.1.0"
+  },
+  "scripts": {
+    "start": "node app.ts",
+    "dev": "node --watch app.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
