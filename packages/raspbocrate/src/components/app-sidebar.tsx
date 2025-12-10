@@ -3,7 +3,6 @@ import {
   Box,
   Container,
   HardDrive,
-  Import,
   LayoutDashboard,
   Server,
 } from 'lucide-react';

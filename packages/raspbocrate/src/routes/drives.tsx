@@ -1,15 +1,21 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { getUsbDrives } from '@/server/usb';
+import { getServerUsbDrives } from '@/server/usb';
 import { DrivesList } from '@/components/DrivesList';
+import { useServerFn } from '@tanstack/react-start';
 
-const usbDrivesQueryOptions = {
-  queryKey: ['usb-drives'],
-  queryFn: () => getUsbDrives(),
+const useDrives = () => {
+  const getUsbDrives = useServerFn(getServerUsbDrives);
+
+  return useSuspenseQuery({
+    queryKey: ['usb-drives'],
+    queryFn: () => getUsbDrives(),
+  });
 };
 
 const DrivesPage = () => {
-  const { data: drives } = useSuspenseQuery(usbDrivesQueryOptions);
+  console.log('🪚 ⭐');
+  const { data: drives } = useDrives();
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-6">
@@ -26,7 +32,4 @@ const DrivesPage = () => {
 
 export const Route = createFileRoute('/drives')({
   component: DrivesPage,
-  loader: ({ context }) => {
-    context.queryClient.ensureQueryData(usbDrivesQueryOptions);
-  },
 });

@@ -9,38 +9,65 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as DrivesRouteImport } from './routes/drives'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DriveDriveNameRouteImport } from './routes/drive.$driveName'
 
+const DrivesRoute = DrivesRouteImport.update({
+  id: '/drives',
+  path: '/drives',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DriveDriveNameRoute = DriveDriveNameRouteImport.update({
+  id: '/drive/$driveName',
+  path: '/drive/$driveName',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/drives': typeof DrivesRoute
+  '/drive/$driveName': typeof DriveDriveNameRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/drives': typeof DrivesRoute
+  '/drive/$driveName': typeof DriveDriveNameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/drives': typeof DrivesRoute
+  '/drive/$driveName': typeof DriveDriveNameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/drives' | '/drive/$driveName'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/drives' | '/drive/$driveName'
+  id: '__root__' | '/' | '/drives' | '/drive/$driveName'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DrivesRoute: typeof DrivesRoute
+  DriveDriveNameRoute: typeof DriveDriveNameRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/drives': {
+      id: '/drives'
+      path: '/drives'
+      fullPath: '/drives'
+      preLoaderRoute: typeof DrivesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/drive/$driveName': {
+      id: '/drive/$driveName'
+      path: '/drive/$driveName'
+      fullPath: '/drive/$driveName'
+      preLoaderRoute: typeof DriveDriveNameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DrivesRoute: DrivesRoute,
+  DriveDriveNameRoute: DriveDriveNameRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

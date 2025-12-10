@@ -41,7 +41,7 @@ const extractUsbPartitions = (devices: LsblkDevice[]): LsblkDevice[] => {
   return partitions;
 };
 
-export const getUsbDrives = createServerFn().handler(
+export const getServerUsbDrives = createServerFn().handler(
   async (): Promise<UsbDrive[]> => {
     try {
       const { stdout } = await execFileAsync('lsblk', [
@@ -55,11 +55,11 @@ export const getUsbDrives = createServerFn().handler(
 
       const drives: UsbDrive[] = await Promise.all(
         usbPartitions.map(async (partition) => {
-          const hasCatalog = await checkCatalogDirectory(partition.mountpoint!);
+          const hasCatalog = await checkCatalogDirectory(partition.mountpoint);
 
           return {
             name: partition.name,
-            mountpoint: partition.mountpoint!,
+            mountpoint: partition.mountpoint,
             size: partition.size,
             label: partition.label,
             hasCatalog,

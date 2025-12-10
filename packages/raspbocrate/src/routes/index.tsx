@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Box, Container, HardDrive, Server } from 'lucide-react';
+import { Container, HardDrive, Server } from 'lucide-react';
 
 const HomePage = () => (
   <div className="flex flex-1 flex-col gap-6 p-6">
