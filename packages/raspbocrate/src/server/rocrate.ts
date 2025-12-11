@@ -174,7 +174,7 @@ const parseRoCrate = async (
             name: getEntityName(
               part as { name?: string | string[]; '@id': string },
             ),
-            path: path.join(cratePath, partAtId),
+            path: path.join(cratePath, part.filename as string),
             encodingFormat: part.encodingFormat as string | undefined,
             contentSize: part.contentSize as string | undefined,
           });

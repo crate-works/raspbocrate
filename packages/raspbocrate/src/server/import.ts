@@ -1,7 +1,5 @@
 import { stat } from 'node:fs/promises';
 import path from 'node:path';
-// import { createServerFn } from '@tanstack/react-start';
-// import { z } from 'zod';
 
 import { prisma } from '@/db';
 import type {
@@ -10,7 +8,6 @@ import type {
   MediaFile,
   RoCrateInfo,
 } from '@/types/rocrate';
-// import { getServerDriveContents } from './rocrate';
 
 const parseContentSize = (contentSize: string | undefined): bigint => {
   if (!contentSize) {
@@ -64,8 +61,9 @@ const processEntity = async (
       metadataLicenseId: 'foo',
       contentLicenseId: 'bar',
       fileId: null,
-      rocrate: {},
-      // meta: null,
+      meta: {
+        cratePath: cratePath,
+      },
     };
 
     if (existing) {
@@ -83,7 +81,7 @@ const processEntity = async (
 
     // Process media files
     for (const file of entity.mediaFiles) {
-      await processFile(file, cratePath, rootCollectionId, entityId, stats);
+      await processFile(file, rootCollectionId, entityId, stats);
     }
 
     // Process child entities
@@ -99,13 +97,10 @@ const processEntity = async (
 
 const processFile = async (
   file: MediaFile,
-  cratePath: string,
   rootCollectionId: string,
   parentEntityId: string,
   stats: ImportStats,
 ): Promise<void> => {
-  const fileId = file.id;
-
   try {
     // Check file size from filesystem if contentSize not provided
     // Use atId for the file path since it's the actual path in the crate
@@ -113,8 +108,7 @@ const processFile = async (
 
     if (size === BigInt(0)) {
       try {
-        const filePath = path.join(cratePath, file.atId);
-        const fileStat = await stat(filePath);
+        const fileStat = await stat(file.path);
         size = BigInt(fileStat.size);
       } catch {
         // File might not exist or be inaccessible, use 0
@@ -122,22 +116,25 @@ const processFile = async (
     }
 
     const fileData = {
-      fileId,
+      fileId: file.id,
       filename: file.name,
       mediaType: file.encodingFormat || 'application/octet-stream',
       size,
       memberOf: parentEntityId,
       rootCollection: rootCollectionId,
       contentLicenseId: 'foo',
+      meta: {
+        filePath: file.path,
+      },
     };
 
-    const existing = await prisma.file.findUnique({
-      where: { fileId },
+    const existingFile = await prisma.file.findUnique({
+      where: { fileId: file.id },
     });
 
-    if (existing) {
+    if (existingFile) {
       await prisma.file.update({
-        where: { fileId },
+        where: { fileId: file.id },
         data: fileData,
       });
       stats.filesUpdated++;
@@ -147,10 +144,74 @@ const processFile = async (
       });
       stats.filesCreated++;
     }
+
+    // Also create an Entity record for the file (MediaObject)
+    const mediaType = file.encodingFormat || 'application/octet-stream';
+    const virtualRoCrate = {
+      '@context': [
+        'https://w3id.org/ro/crate/1.2-DRAFT/context',
+        { '@vocab': 'http://schema.org/' },
+        'http://purl.archive.org/language-data-commons/context.json',
+        {
+          Geometry: 'http://www.opengis.net/ont/geosparql#Geometry',
+          asWKT: 'http://www.opengis.net/ont/geosparql#asWKT',
+        },
+        'https://w3id.org/ldac/context',
+      ],
+      '@graph': [
+        {
+          '@id': file.id,
+          '@type': 'File',
+          contentSize: Number(size),
+          encodingFormat: mediaType,
+          name: file.name,
+          filename: file.path,
+          parentId: parentEntityId,
+        },
+        {
+          '@id': 'ro-crate-metadata.json',
+          '@type': 'CreativeWork',
+          conformsTo: { '@id': 'https://w3id.org/ro/crate/1.2-DRAFT' },
+          about: { '@id': file.id },
+        },
+      ],
+    };
+
+    const entityData = {
+      rocrateId: file.id,
+      name: file.name,
+      description: '',
+      entityType: 'http://schema.org/MediaObject',
+      memberOf: parentEntityId,
+      rootCollection: rootCollectionId,
+      metadataLicenseId: 'foo',
+      contentLicenseId: 'bar',
+      fileId: file.id,
+      meta: {
+        rocrate: virtualRoCrate,
+      },
+    };
+
+    const existingEntity = await prisma.entity.findFirst({
+      where: { rocrateId: file.id },
+    });
+
+    if (existingEntity) {
+      await prisma.entity.update({
+        where: { id: existingEntity.id },
+        data: entityData,
+      });
+      stats.entitiesUpdated++;
+    } else {
+      await prisma.entity.create({
+        data: entityData,
+      });
+      stats.entitiesCreated++;
+    }
   } catch (error) {
     const message =
       error instanceof Error ? error.message : 'Unknown error occurred';
-    stats.errors.push(`File ${fileId}: ${message}`);
+    stats.errors.push(`File ${file.id}: ${message}`);
   }
 };
 
