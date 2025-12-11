@@ -1,5 +1,6 @@
 export type MediaFile = {
   id: string;
+  atId: string;
   name: string;
   path: string;
   encodingFormat?: string;
@@ -8,9 +9,11 @@ export type MediaFile = {
 
 export type CrateEntity = {
   id: string;
+  atId: string;
   type: string | string[];
   name: string;
   description?: string;
+  license?: string;
   mediaFiles: MediaFile[];
   children: CrateEntity[];
 };

@@ -31,6 +31,14 @@ services:
       timeout: 5s
       retries: 5
 
+  oni-ui:
+    image: ghcr.io/language-research-technology/oni-ui:new-api
+    ports:
+      - "5000:80"
+    volumes:
+      - ./docker/oni-ui.json:/configuration.json
+      - ./docker/logo.png://usr/share/nginx/html/logo.png
+
 volumes:
   mysql_data:
   opensearch_data:

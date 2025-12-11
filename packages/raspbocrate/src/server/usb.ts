@@ -1,9 +1,9 @@
-import { createServerFn } from '@tanstack/react-start';
 import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
 import { access, constants } from 'node:fs/promises';
 import path from 'node:path';
-import type { UsbDrive, LsblkOutput, LsblkDevice } from '@/types/usb';
+import { promisify } from 'node:util';
+import { createServerFn } from '@tanstack/react-start';
+import type { LsblkDevice, LsblkOutput, UsbDrive } from '@/types/usb';
 
 const execFileAsync = promisify(execFile);
 
@@ -55,13 +55,15 @@ export const getServerUsbDrives = createServerFn().handler(
 
       const drives: UsbDrive[] = await Promise.all(
         usbPartitions.map(async (partition) => {
-          const hasCatalog = await checkCatalogDirectory(partition.mountpoint);
+          const hasCatalog = partition.mountpoint
+            ? await checkCatalogDirectory(partition.mountpoint)
+            : false;
 
           return {
             name: partition.name,
             mountpoint: partition.mountpoint,
             size: partition.size,
-            label: partition.label,
+            label: partition.label || 'NO LABEL',
             hasCatalog,
           };
         }),

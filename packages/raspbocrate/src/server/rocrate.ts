@@ -1,14 +1,14 @@
-import { createServerFn } from '@tanstack/react-start';
-import { readFile, readdir, stat } from 'node:fs/promises';
+import { readdir, readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
+import { createServerFn } from '@tanstack/react-start';
 import { ROCrate } from 'ro-crate';
+import { z } from 'zod';
 import type {
   CrateEntity,
   CrateTreeNode,
   MediaFile,
   RoCrateInfo,
 } from '@/types/rocrate';
-import { z } from 'zod';
 
 const RO_CRATE_METADATA_FILENAME = 'ro-crate-metadata.json';
 
@@ -64,6 +64,18 @@ const getEntityName = (entity: {
   return name || entity['@id'];
 };
 
+const getEntityIdentifier = (entity: {
+  identifier?: string | string[];
+  '@id': string;
+}): string => {
+  const identifier = entity.identifier;
+  if (Array.isArray(identifier)) {
+    return identifier[0] || entity['@id'];
+  }
+
+  return identifier || entity['@id'];
+};
+
 const isMediaType = (type: string | string[]): boolean => {
   const mediaTypes = [
     'MediaObject',
@@ -108,7 +120,7 @@ const parseRoCrate = async (
   basePath: string,
 ): Promise<RoCrateInfo> => {
   const content = await readFile(filePath, 'utf-8');
-  const data = JSON.parse(content);
+  const data = JSON.parse(content) as Record<string, unknown>;
   const crate = new ROCrate(data, { array: false, link: true });
 
   const rootDataset = crate.rootDataset;
@@ -120,11 +132,14 @@ const parseRoCrate = async (
     entity: Record<string, unknown>,
     visited: Set<string> = new Set(),
   ): CrateEntity => {
-    const entityId = entity['@id'] as string;
+    const atId = entity['@id'] as string;
 
-    if (visited.has(entityId)) {
+    if (visited.has(atId)) {
       return {
-        id: entityId,
+        id: getEntityIdentifier(
+          entity as { identifier?: string | string[]; '@id': string },
+        ),
+        atId,
         type: getEntityType(entity as { '@type'?: string | string[] }),
         name: getEntityName(
           entity as { name?: string | string[]; '@id': string },
@@ -133,7 +148,7 @@ const parseRoCrate = async (
         children: [],
       };
     }
-    visited.add(entityId);
+    visited.add(atId);
 
     const mediaFiles: MediaFile[] = [];
     const children: CrateEntity[] = [];
@@ -150,12 +165,16 @@ const parseRoCrate = async (
 
         if (isMediaType(partType)) {
           // It's a media file
+          const partAtId = part['@id'] as string;
           mediaFiles.push({
-            id: part['@id'] as string,
+            id: getEntityIdentifier(
+              part as { identifier?: string | string[]; '@id': string },
+            ),
+            atId: partAtId,
             name: getEntityName(
               part as { name?: string | string[]; '@id': string },
             ),
-            path: path.join(cratePath, part['@id'] as string),
+            path: path.join(cratePath, partAtId),
             encodingFormat: part.encodingFormat as string | undefined,
             contentSize: part.contentSize as string | undefined,
           });
@@ -169,7 +188,10 @@ const parseRoCrate = async (
     }
 
     return {
-      id: entityId,
+      id: getEntityIdentifier(
+        entity as { identifier?: string | string[]; '@id': string },
+      ),
+      atId,
       type: getEntityType(entity as { '@type'?: string | string[] }),
       name: getEntityName(
         entity as { name?: string | string[]; '@id': string },

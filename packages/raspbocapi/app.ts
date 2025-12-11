@@ -5,6 +5,7 @@ import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 import arocapi, {
   AllPublicAccessTransformer,
   AllPublicFileAccessTransformer,
+  type EntityTransformer,
 } from 'arocapi';
 import Fastify from 'fastify';
 import { PrismaClient } from './generated/prisma/client.ts';
@@ -36,9 +37,50 @@ const fastify = Fastify({
   logger: true,
 });
 
-fastify.register(arocapi, {
+const entityTransformers: EntityTransformer[] = [
+  async (entity, { fastify }) => {
+    const objectCount = entity.memberOf
+      ? await fastify.prisma.entity.count({
+          where: { memberOf: entity.id },
+        })
+      : 0;
+
+    return {
+      ...entity,
+      counts: {
+        objects: objectCount,
+      },
+    };
+  },
+  async (entity, { fastify }) => {
+    const files = await fastify.prisma.file.findMany({
+      where: {
+        OR: [
+          { memberOf: entity.id },
+          { memberOf: { startsWith: `${entity.id}/` } },
+        ],
+      },
+      select: { mediaType: true },
+      distinct: ['mediaType'],
+    });
+
+    const mediaType = files.map((f) => f.mediaType);
+
+    return {
+      ...entity,
+      mediaType,
+    };
+  },
+  async (entity) => ({
+    ...entity,
+    accessControl: 'public',
+  }),
+];
+
+await fastify.register(arocapi, {
   prisma,
   opensearch,
+  entityTransformers,
   accessTransformer: AllPublicAccessTransformer,
   fileAccessTransformer: AllPublicFileAccessTransformer,
   // Required: File handler for serving File entity content
@@ -71,9 +113,10 @@ fastify.register(arocapi, {
     }),
   },
 });
+console.log('🪚 ♓');
 
 try {
-  await fastify.listen({ port: 3000 });
+  await fastify.listen({ port: 4000 });
 } catch (err) {
   fastify.log.error(err);
   process.exit(1);

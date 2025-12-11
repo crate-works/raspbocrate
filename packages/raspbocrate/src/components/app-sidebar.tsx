@@ -31,7 +31,7 @@ const navImport = [
 const navServices = [
   {
     title: 'oni-ui',
-    url: '/services/oni-ui',
+    url: 'http://localhost:5000',
     icon: LayoutDashboard,
   },
   {

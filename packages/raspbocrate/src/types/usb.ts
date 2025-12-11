@@ -1,6 +1,6 @@
 export type UsbDrive = {
   name: string;
-  mountpoint: string;
+  mountpoint: string | null;
   size: string;
   label: string | null;
   hasCatalog: boolean;

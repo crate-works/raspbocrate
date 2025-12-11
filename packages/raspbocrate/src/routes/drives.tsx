@@ -1,8 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { getServerUsbDrives } from '@/server/usb';
-import { DrivesList } from '@/components/DrivesList';
+import { createFileRoute } from '@tanstack/react-router';
 import { useServerFn } from '@tanstack/react-start';
+import { DrivesList } from '@/components/DrivesList';
+import { getServerUsbDrives } from '@/server/usb';
 
 const useDrives = () => {
   const getUsbDrives = useServerFn(getServerUsbDrives);

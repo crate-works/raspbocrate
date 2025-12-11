@@ -1,15 +1,15 @@
-import { useState } from 'react';
 import {
-  ChevronRight,
   ChevronDown,
-  Folder,
+  ChevronRight,
   File,
+  FileText,
+  Folder,
   Image,
   Music,
-  Video,
-  FileText,
   Package,
+  Video,
 } from 'lucide-react';
+import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import type {
   CrateEntity,

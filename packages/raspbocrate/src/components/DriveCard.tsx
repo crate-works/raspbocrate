@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { HardDrive, FolderOpen, FolderX } from 'lucide-react';
+import { FolderOpen, FolderX, HardDrive } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { UsbDrive } from '@/types/usb';
 
