@@ -16,7 +16,7 @@
     "fastify": "^5.0.0"
   },
   "devDependencies": {
-    "@types/node": "^22",
+    "@types/node": "^22.19.3",
     "fastify-cli": "^7.4.1",
     "prisma": "^7.1.0"
   },
