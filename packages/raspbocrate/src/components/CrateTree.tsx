@@ -72,10 +72,13 @@ const EntityNode = ({ entity, level }: EntityNodeProps) => {
 
   return (
     <div className="select-none">
-      <div
+      <button
+        type="button"
+        disabled={!hasChildren}
         className={cn(
-          'flex items-center gap-1 py-1 px-2 rounded cursor-pointer hover:bg-accent/50',
+          'flex w-full items-center gap-1 py-1 px-2 rounded cursor-pointer hover:bg-accent/50 text-left bg-transparent border-none',
           level === 0 && 'font-medium',
+          !hasChildren && 'cursor-default',
         )}
         style={{ paddingLeft: `${level * 16 + 8}px` }}
         onClick={() => hasChildren && setIsExpanded(!isExpanded)}
@@ -97,7 +100,7 @@ const EntityNode = ({ entity, level }: EntityNodeProps) => {
             {entity.mediaFiles.length !== 1 ? 's' : ''}
           </span>
         )}
-      </div>
+      </button>
 
       {isExpanded && hasChildren && (
         <div>
@@ -127,8 +130,9 @@ const CrateCard = ({ crate, level = 0 }: CrateCardProps) => {
 
   return (
     <div className={cn('rounded-lg border bg-card', level > 0 && 'ml-6 mt-2')}>
-      <div
-        className="p-4 border-b cursor-pointer hover:bg-accent/30"
+      <button
+        type="button"
+        className="w-full p-4 border-b cursor-pointer hover:bg-accent/30 text-left bg-transparent border-x-0 border-t-0"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center gap-2">
@@ -150,7 +154,7 @@ const CrateCard = ({ crate, level = 0 }: CrateCardProps) => {
             {crate.description}
           </p>
         )}
-      </div>
+      </button>
       {isExpanded && (
         <div className="p-2">
           <EntityNode entity={crate.rootEntity} level={0} />
