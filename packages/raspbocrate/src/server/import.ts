@@ -64,6 +64,7 @@ const processEntity = async (
       meta: {
         cratePath: cratePath,
       },
+      rocrate: {},
     };
 
     if (existing) {

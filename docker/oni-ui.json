@@ -11,10 +11,6 @@
         "title": "Welcome to Rasbocrate",
         "subtitle": "Your trusted tool for managing catalogs in the field"
       },
-      "search": {
-        "enabled": true,
-        "placeholder": "Search collections, items, or files..."
-      },
       "content": "<div class='text-left text-gray-700'><div><h3 class='text-lg font-semibold mb-2'>TODO</h3><p>TODO</p></div>"
     },
     "help": {
