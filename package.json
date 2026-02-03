@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "lint:biome": "biome check ."
+    "lint:biome": "biome check .",
+    "docker:raspbocrate": "docker build -d packages/raspbocrate/Dockerfile -t raspbocrate ."
   },
   "keywords": [],
   "author": "",
