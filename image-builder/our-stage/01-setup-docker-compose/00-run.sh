@@ -33,7 +33,7 @@ for img in "${IMAGES[@]}"; do
   dirname=${img//[\/:]/__}
   echo "Pulling $img..."
   rm -rf "${ROOTFS_DIR}/var/lib/docker-images/${dirname}.tar"
-  skopeo copy --override-arch arm64 --override-os linux "docker://$img" "docker-archive:${ROOTFS_DIR}/var/lib/docker-images/${dirname}.tar"
+  skopeo copy --override-arch arm64 --override-os linux "docker://$img" "docker-archive:${ROOTFS_DIR}/var/lib/docker-images/${dirname}.tar:${img}"
 done
 
 # Install first-boot script and service to load images
