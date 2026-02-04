@@ -1,0 +1,144 @@
+name: Build Raspberry Pi Image
+
+on:
+  workflow_run:
+    workflows: ["Build and Publish Docker Images"]
+    types: [completed]
+    branches: [main]
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build-image:
+    name: Build Raspberry Pi Image
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    # Only run if the triggering workflow succeeded (or if triggered by tag/dispatch)
+    if: >
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
+    permissions:
+      contents: write
+      packages: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Free disk space
+        run: |
+          echo "Disk space before cleanup:"
+          df -h /
+
+          # Remove unnecessary packages to free up space
+          df -h /
+          sudo rm -rf /usr/share/dotnet
+          df -h /
+          sudo rm -rf /usr/local/lib/android
+          df -h /
+          sudo rm -rf /opt/ghc
+          df -h /
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          df -h /
+          sudo rm -rf /usr/local/share/boost
+          df -h /
+          sudo rm -rf /usr/share/swift
+          df -h /
+
+          echo "Disk space after cleanup:"
+          df -h /
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build image
+        working-directory: image-builder
+        run: |
+          ./bin/build-image --ci
+
+      - name: Find and compress image
+        id: compress
+        run: |
+          # Find the generated image
+          IMAGE_PATH=$(find image-builder/pi-gen/deploy -name "*.img" -type f | head -1)
+
+          if [ -z "$IMAGE_PATH" ]; then
+            echo "Error: No image file found in image-builder/pi-gen/deploy"
+            ls -la image-builder/pi-gen/deploy/
+            exit 1
+          fi
+
+          echo "Found image: $IMAGE_PATH"
+          IMAGE_NAME=$(basename "$IMAGE_PATH")
+
+          # Compress with xz (maximum compression, multi-threaded)
+          echo "Compressing image..."
+          xz -9 -T0 -v "$IMAGE_PATH"
+
+          COMPRESSED_PATH="${IMAGE_PATH}.xz"
+          COMPRESSED_NAME="${IMAGE_NAME}.xz"
+
+          echo "Compressed image: $COMPRESSED_PATH"
+          ls -lh "$COMPRESSED_PATH"
+
+          # Generate checksum
+          cd "$(dirname "$COMPRESSED_PATH")"
+          sha256sum "$COMPRESSED_NAME" > "${COMPRESSED_NAME}.sha256"
+
+          echo "Checksum:"
+          cat "${COMPRESSED_NAME}.sha256"
+
+          # Set outputs
+          echo "image_path=$COMPRESSED_PATH" >> "$GITHUB_OUTPUT"
+          echo "image_name=$COMPRESSED_NAME" >> "$GITHUB_OUTPUT"
+          echo "checksum_path=${COMPRESSED_PATH}.sha256" >> "$GITHUB_OUTPUT"
+          echo "checksum_name=${COMPRESSED_NAME}.sha256" >> "$GITHUB_OUTPUT"
+
+      - name: Did we free up enough disk space?
+        run: |
+          echo "Disk space after image build:"
+          df -h /
+
+      - name: Upload artifact
+        if: github.event_name != 'push' || !startsWith(github.ref, 'refs/tags/')
+        uses: actions/upload-artifact@v4
+        with:
+          name: raspbocrate-image
+          path: |
+            ${{ steps.compress.outputs.image_path }}
+            ${{ steps.compress.outputs.checksum_path }}
+          retention-days: 14
+
+      - name: Create GitHub Release
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ${{ steps.compress.outputs.image_path }}
+            ${{ steps.compress.outputs.checksum_path }}
+          generate_release_notes: true
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pi-gen-logs
+          path: |
+            image-builder/pi-gen/deploy/*.log
+            image-builder/pi-gen/work/**/*.log
+          retention-days: 7

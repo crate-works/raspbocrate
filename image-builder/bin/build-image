@@ -2,12 +2,29 @@
 
 set -e
 
-function exit_handler() {
-  echo "Exiting, cleaning up..."
-  docker stop apt-cacher-ng
-}
+CI_MODE=false
+CONTINUE_BUILD=false
 
-trap "exit_handler" INT TERM ERR
+# Parse arguments
+for arg in "$@"; do
+  case $arg in
+    --ci)
+      CI_MODE=true
+      ;;
+    continue)
+      CONTINUE_BUILD=true
+      ;;
+  esac
+done
+
+if [ "$CI_MODE" = false ]; then
+  function exit_handler() {
+    echo "Exiting, cleaning up..."
+    docker stop apt-cacher-ng
+  }
+
+  trap "exit_handler" INT TERM ERR
+fi
 
 if [ ! -d pi-gen ]; then
   git clone --depth 1 --branch arm64 https://github.com/RPI-Distro/pi-gen.git
@@ -19,15 +36,28 @@ fi
 rm -rf pi-gen/our-stage
 cp -ar our-stage pi-gen
 
-docker run --rm -d -p 3142:3142 --name apt-cacher-ng \
-  -v ./tmp/apt-cache:/var/cache/apt-cacher-ng \
-  sameersbn/apt-cacher-ng
+# Remove stage2 export so we don't build the lite image
+rm -f pi-gen/stage2/EXPORT_IMAGE pi-gen/stage2/EXPORT_NOOBS
 
 # Apply our patches to pi-gen (qemu fixes + skopeo)
 git -C pi-gen apply ../pi-gen-fixes.patch
 
-if [ "$1" = "continue" ]; then
-  sudo PRESERVE_CONTAINER=1 CONTINUE=1 pi-gen/build-docker.sh -c config
+if [ "$CI_MODE" = true ]; then
+  # CI mode: create config without APT_PROXY
+  CONFIG_FILE="config-ci"
+  grep -v '^APT_PROXY=' config > "$CONFIG_FILE"
+  echo "Using CI config (no APT_PROXY):"
+  cat "$CONFIG_FILE"
 else
-  sudo PRESERVE_CONTAINER=1 pi-gen/build-docker.sh -c config
+  # Local mode: start apt-cacher-ng
+  CONFIG_FILE="config"
+  docker run --rm -d -p 3142:3142 --name apt-cacher-ng \
+    -v ./tmp/apt-cache:/var/cache/apt-cacher-ng \
+    sameersbn/apt-cacher-ng
+fi
+
+if [ "$CONTINUE_BUILD" = true ]; then
+  sudo PRESERVE_CONTAINER=1 CONTINUE=1 pi-gen/build-docker.sh -c "$CONFIG_FILE"
+else
+  sudo PRESERVE_CONTAINER=1 pi-gen/build-docker.sh -c "$CONFIG_FILE"
 fi
