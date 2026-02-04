@@ -1,5 +1,10 @@
 #!/bin/bash -ex
 
+# add default user to docker group
+on_chroot <<EOF
+  adduser $FIRST_USER_NAME docker
+EOF
+
 # Install files to the image
 install -d "${ROOTFS_DIR}/opt/raspbocrate"
 install -m 644 files/docker-compose.yml "${ROOTFS_DIR}/opt/raspbocrate/docker-compose.yml"
@@ -9,7 +14,7 @@ install -m 644 files/raspbocrate.service "${ROOTFS_DIR}/etc/systemd/system/raspb
 
 # Enable the service
 on_chroot <<EOF
-systemctl enable raspbocrate.service
+  systemctl enable raspbocrate.service
 EOF
 
 # Pre-pull Docker images using skopeo
@@ -36,5 +41,5 @@ install -m 755 files/load-images.sh "${ROOTFS_DIR}/opt/raspbocrate/load-images.s
 install -m 644 files/raspbocrate-load-images.service "${ROOTFS_DIR}/etc/systemd/system/raspbocrate-load-images.service"
 
 on_chroot <<EOF
-systemctl enable raspbocrate-load-images.service
+  systemctl enable raspbocrate-load-images.service
 EOF
