@@ -27,8 +27,9 @@ mkdir -p tmp/boot
 
 # Prepare the image
 cd deploy
-qemu-img convert -f raw -O qcow2 -o compression_type=zstd ./2*.img raspbocrate.qcow2
-qemu-img resize ./raspbocrate.qcow2 4G # NOTE: adjust size as needed
+qemu-img convert -f raw -O qcow2 -o compression_type=zstd ./2*-raspbocrate.img raspbocrate.qcow2
+qemu-img resize ./raspbocrate.qcow2 8G # NOTE: adjust size as needed
+sudo modprobe nbd max_part=8
 sudo qemu-nbd -c /dev/nbd0 ./raspbocrate.qcow2
 echo ',+' | sudo sfdisk -N2 /dev/nbd0 # Resize partition 2 to fill the disk
 sudo e2fsck -f /dev/nbd0p2

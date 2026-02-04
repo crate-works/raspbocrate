@@ -12,9 +12,8 @@ trap "exit_handler" INT TERM ERR
 if [ ! -d pi-gen ]; then
   git clone --depth 1 --branch arm64 https://github.com/RPI-Distro/pi-gen.git
 else
-  cd pi-gen
-  git pull
-  cd ..
+  git -C pi-gen restore .
+  git -C pi-gen pull
 fi
 
 rm -rf pi-gen/our-stage
@@ -24,14 +23,11 @@ docker run --rm -d -p 3142:3142 --name apt-cacher-ng \
   -v ./tmp/apt-cache:/var/cache/apt-cacher-ng \
   sameersbn/apt-cacher-ng
 
-# Till upstream fixes
-sed -i 's/qemu-aarch64-static/qemu-aarch64/;s/qemu-user-static/qemu-user-binfmt/' pi-gen/build-docker.sh
-sed -i 's/qemu-arm-static:qemu-user-static/qemu-arm:qemu-user-binfmt/' pi-gen/depends
+# Apply our patches to pi-gen (qemu fixes + skopeo)
+git -C pi-gen apply ../pi-gen-fixes.patch
 
 if [ "$1" = "continue" ]; then
-  sudo CONTINUE=1 pi-gen/build-docker.sh -c config
+  sudo PRESERVE_CONTAINER=1 CONTINUE=1 pi-gen/build-docker.sh -c config
 else
-  sudo pi-gen/build-docker.sh -c config
+  sudo PRESERVE_CONTAINER=1 pi-gen/build-docker.sh -c config
 fi
-
-cp pi-gen/deploy/*lite.img rasbocrate.img

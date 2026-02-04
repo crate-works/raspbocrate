@@ -1,0 +1,13 @@
+[Unit]
+Description=Load pre-pulled Docker images
+Requires=docker.service
+After=docker.service
+Before=raspbocrate.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/raspbocrate/load-images.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

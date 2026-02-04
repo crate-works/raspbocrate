@@ -1,0 +1,53 @@
+diff --git i/Dockerfile w/Dockerfile
+index f17077c..61da683 100644
+--- i/Dockerfile
++++ w/Dockerfile
+@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
+ RUN apt-get -y update && \
+     apt-get -y install --no-install-recommends \
+         git vim parted \
+-        quilt coreutils qemu-user-static debootstrap zerofree zip dosfstools e2fsprogs\
++        quilt coreutils qemu-user-binfmt debootstrap zerofree zip dosfstools e2fsprogs skopeo\
+         libarchive-tools libcap2-bin rsync grep udev xz-utils curl xxd file kmod bc \
+         binfmt-support ca-certificates fdisk gpg pigz arch-test \
+     && rm -rf /var/lib/apt/lists/*
+diff --git i/build-docker.sh w/build-docker.sh
+index 53f8cf7..39ab673 100755
+--- i/build-docker.sh
++++ w/build-docker.sh
+@@ -105,10 +105,10 @@ case $(uname -m) in
+     ;;
+ esac
+ 
+-# Check if qemu-aarch64-static and /proc/sys/fs/binfmt_misc are present
++# Check if qemu-aarch64 and /proc/sys/fs/binfmt_misc are present
+ if [[ "${binfmt_misc_required}" == "1" ]]; then
+-  if ! qemu_arm=$(which qemu-aarch64-static) ; then
+-    echo "qemu-aarch64-static not found (please install qemu-user-static)"
++  if ! qemu_arm=$(which qemu-aarch64) ; then
++    echo "qemu-aarch64 not found (please install qemu-user-binfmt)"
+     exit 1
+   fi
+   if [ ! -f /proc/sys/fs/binfmt_misc/register ]; then
+@@ -141,7 +141,7 @@ time ${DOCKER} run \
+   $DOCKER_CMDLINE_POST \
+   pi-gen \
+   bash -e -o pipefail -c "
+-    dpkg-reconfigure qemu-user-static &&
++    dpkg-reconfigure qemu-user-binfmt &&
+     # binfmt_misc is sometimes not mounted with debian trixie image
+     (mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc || true) &&
+     cd /pi-gen; ./build.sh ${BUILD_OPTS} &&
+diff --git i/depends w/depends
+index 752ba79..0aa89cb 100644
+--- i/depends
++++ w/depends
+@@ -1,7 +1,7 @@
+ quilt
+ parted
+ realpath:coreutils
+-qemu-arm-static:qemu-user-static
++qemu-arm:qemu-user-binfmt
+ debootstrap
+ zerofree
+ zip
