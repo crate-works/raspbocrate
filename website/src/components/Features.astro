@@ -1,0 +1,84 @@
+---
+const features = [
+  {
+    title: 'Offline Catalogue Management',
+    description:
+      'Manage your RO-Crate catalogues without an internet connection. Perfect for remote fieldwork.',
+    icon: 'wifi-off',
+  },
+  {
+    title: 'USB Drive Import',
+    description:
+      'Import collections directly from USB drives. Simply plug in and load your data.',
+    icon: 'usb',
+  },
+  {
+    title: 'Web-Based Admin Interface',
+    description:
+      'Configure and manage your system through an intuitive web interface accessible from any device.',
+    icon: 'settings',
+  },
+  {
+    title: 'Pre-Built Pi Image',
+    description:
+      'Download a ready-to-use Raspberry Pi image. Just flash, boot, and start working.',
+    icon: 'download',
+  },
+  {
+    title: 'Integrated Search',
+    description:
+      'Powerful full-text search powered by OpenSearch. Find what you need instantly.',
+    icon: 'search',
+  },
+  {
+    title: 'PARADISEC Integration',
+    description:
+      'Built by PARADISEC for language archiving and cultural heritage preservation.',
+    icon: 'archive',
+  },
+];
+
+const iconPaths: Record<string, string> = {
+  'wifi-off':
+    'M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39M10.71 5.05A16 16 0 0 1 22.58 9M1.42 9a15.91 15.91 0 0 1 4.7-2.88M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01M2 2l20 20',
+  usb: 'M12 2v10m0 0l3-3m-3 3l-3-3m-3 6v3a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-3M7 15v-2a2 2 0 0 1 2-2h0m6 4v-2a2 2 0 0 0-2-2h0',
+  settings:
+    'M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
+  download: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4m4-5l5 5 5-5m-5 5V3',
+  search: 'M21 21l-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0z',
+  archive: 'M3 3h18v4H3zm0 8h18v10H3zm5 3h8',
+};
+---
+
+<section class="bg-white py-20">
+  <div class="container-wide">
+    <div class="mx-auto max-w-2xl text-center">
+      <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+        Everything you need for field cataloguing
+      </h2>
+      <p class="mt-4 text-lg text-gray-600">
+        RaspboCrate provides a complete solution for managing research data in remote locations.
+      </p>
+    </div>
+
+    <div class="mx-auto mt-16 grid max-w-5xl grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      {features.map((feature) => (
+        <div class="group relative rounded-xl border border-gray-200 bg-white p-6 transition-all hover:border-primary-200 hover:shadow-lg">
+          <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary-100 text-primary-600 transition-colors group-hover:bg-primary-600 group-hover:text-white">
+            <svg
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d={iconPaths[feature.icon]} />
+            </svg>
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900">{feature.title}</h3>
+          <p class="mt-2 text-gray-600">{feature.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

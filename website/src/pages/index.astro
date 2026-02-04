@@ -1,0 +1,81 @@
+---
+import Architecture from '../components/Architecture.astro';
+import Features from '../components/Features.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+  <Header currentPath="/" />
+
+  <main class="flex-1">
+    <Hero />
+    <Features />
+    <Architecture preview={true} />
+
+    <!-- Getting started preview -->
+    <section class="bg-white py-20">
+      <div class="container-wide">
+        <div class="mx-auto max-w-2xl text-center">
+          <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            Get started in minutes
+          </h2>
+          <p class="mt-4 text-lg text-gray-600">
+            Download the pre-built image, flash it to an SD card, and you're ready to go.
+          </p>
+        </div>
+
+        <div class="mx-auto mt-12 max-w-3xl">
+          <ol class="space-y-6">
+            <li class="flex gap-4">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-600 text-sm font-bold text-white">
+                1
+              </span>
+              <div>
+                <h3 class="font-semibold text-gray-900">Download the image</h3>
+                <p class="mt-1 text-gray-600">
+                  Get the latest RaspboCrate image from GitHub Releases.
+                </p>
+              </div>
+            </li>
+            <li class="flex gap-4">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-600 text-sm font-bold text-white">
+                2
+              </span>
+              <div>
+                <h3 class="font-semibold text-gray-900">Flash to SD card</h3>
+                <p class="mt-1 text-gray-600">
+                  Use Raspberry Pi Imager or balenaEtcher to flash the image to your SD card.
+                </p>
+              </div>
+            </li>
+            <li class="flex gap-4">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-600 text-sm font-bold text-white">
+                3
+              </span>
+              <div>
+                <h3 class="font-semibold text-gray-900">Boot and access</h3>
+                <p class="mt-1 text-gray-600">
+                  Insert the SD card, power on your Pi, and access the admin interface at <code class="rounded bg-gray-100 px-1.5 py-0.5 text-sm">http://raspbocrate.local/admin</code>.
+                </p>
+              </div>
+            </li>
+          </ol>
+
+          <div class="mt-10 text-center">
+            <a href="/getting-started" class="btn-primary">
+              View full guide
+              <svg class="ml-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

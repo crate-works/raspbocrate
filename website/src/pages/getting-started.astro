@@ -1,0 +1,193 @@
+---
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Getting Started"
+  description="Learn how to set up RaspboCrate on your Raspberry Pi for offline catalogue management."
+>
+  <Header currentPath="/getting-started" />
+
+  <main class="flex-1">
+    <div class="bg-gray-50 py-12">
+      <div class="container-narrow">
+        <h1 class="text-4xl font-bold tracking-tight text-gray-900">Getting Started</h1>
+        <p class="mt-4 text-lg text-gray-600">
+          Set up RaspboCrate on your Raspberry Pi and start managing catalogues offline.
+        </p>
+      </div>
+    </div>
+
+    <div class="container-narrow py-12">
+      <div class="prose prose-gray max-w-none">
+        <h2>Prerequisites</h2>
+        <p>Before you begin, make sure you have:</p>
+        <ul>
+          <li><strong>Raspberry Pi 4 or 5</strong> (4GB RAM recommended)</li>
+          <li><strong>SD card</strong> (32GB or larger)</li>
+          <li><strong>Power supply</strong> appropriate for your Pi model</li>
+          <li><strong>Network connection</strong> (Ethernet or Wi-Fi) for initial setup</li>
+          <li><strong>Computer</strong> with an SD card reader for flashing the image</li>
+        </ul>
+
+        <h2>Step 1: Download the image</h2>
+        <p>
+          Download the latest RaspboCrate image from the
+          <a
+            href="https://github.com/paradisec-archive/raspbocrate/releases"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub Releases
+          </a> page.
+        </p>
+        <p>
+          Choose the <code>.img.xz</code> file for your architecture. Most users should download
+          the <code>arm64</code> version.
+        </p>
+
+        <h2>Step 2: Flash the image</h2>
+        <p>Use one of these tools to flash the image to your SD card:</p>
+        <ul>
+          <li>
+            <a href="https://www.raspberrypi.com/software/" target="_blank" rel="noopener noreferrer">
+              Raspberry Pi Imager
+            </a> (recommended)
+          </li>
+          <li>
+            <a href="https://etcher.balena.io/" target="_blank" rel="noopener noreferrer">
+              balenaEtcher
+            </a>
+          </li>
+        </ul>
+        <ol>
+          <li>Insert your SD card into your computer</li>
+          <li>Open your chosen imaging tool</li>
+          <li>Select the downloaded RaspboCrate image</li>
+          <li>Select your SD card as the target</li>
+          <li>Click "Write" or "Flash" and wait for the process to complete</li>
+        </ol>
+
+        <h2>Step 3: First boot</h2>
+        <ol>
+          <li>Insert the SD card into your Raspberry Pi</li>
+          <li>Connect an Ethernet cable (recommended) or ensure Wi-Fi credentials are configured</li>
+          <li>Connect the power supply</li>
+          <li>Wait for the Pi to boot (first boot may take a few minutes as containers initialise)</li>
+        </ol>
+
+        <h2>Step 4: Access the admin interface</h2>
+        <p>Once the Pi has booted, access the admin interface in your web browser:</p>
+        <pre><code>http://raspbocrate.local/admin</code></pre>
+        <p>
+          If <code>raspbocrate.local</code> doesn't resolve, you may need to find the Pi's IP
+          address from your router and use that instead.
+        </p>
+
+        <h2>Importing data from USB</h2>
+        <p>RaspboCrate makes it easy to import collections from USB drives:</p>
+        <ol>
+          <li>Prepare your RO-Crate data on a USB drive</li>
+          <li>Insert the USB drive into the Raspberry Pi</li>
+          <li>Open the admin interface</li>
+          <li>Navigate to the "Import" section</li>
+          <li>Select the USB drive and the collections to import</li>
+          <li>Click "Import" and wait for the process to complete</li>
+        </ol>
+
+        <h2>Browsing catalogues</h2>
+        <p>Once you've imported data, you can browse your catalogues using the Oni UI:</p>
+        <pre><code>http://raspbocrate.local/</code></pre>
+        <p>
+          The catalogue browser provides full-text search, filtering by collection, language,
+          and other metadata fields.
+        </p>
+
+        <h2>Troubleshooting</h2>
+
+        <h3>Can't find the Pi on the network</h3>
+        <ul>
+          <li>Ensure the Pi is connected via Ethernet or has valid Wi-Fi credentials</li>
+          <li>Check your router's admin page for connected devices</li>
+          <li>Try using an IP scanner tool like <code>nmap</code> or Angry IP Scanner</li>
+        </ul>
+
+        <h3>Services not starting</h3>
+        <ul>
+          <li>Wait a few minutes after first boot for all containers to start</li>
+          <li>SSH into the Pi and check Docker container status: <code>docker ps</code></li>
+          <li>Check container logs: <code>docker compose logs</code></li>
+        </ul>
+
+        <h3>Need help?</h3>
+        <p>
+          If you encounter issues, please
+          <a
+            href="https://github.com/paradisec-archive/raspbocrate/issues"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            open an issue on GitHub
+          </a>.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  @reference "../styles/global.css";
+
+  .prose h2 {
+    @apply mt-12 text-2xl font-bold text-gray-900;
+  }
+
+  .prose h2:first-of-type {
+    @apply mt-0;
+  }
+
+  .prose h3 {
+    @apply mt-8 text-xl font-semibold text-gray-900;
+  }
+
+  .prose p {
+    @apply mt-4 text-gray-600;
+  }
+
+  .prose ul,
+  .prose ol {
+    @apply mt-4 space-y-2 pl-6 text-gray-600;
+  }
+
+  .prose ul {
+    @apply list-disc;
+  }
+
+  .prose ol {
+    @apply list-decimal;
+  }
+
+  .prose li {
+    @apply pl-2;
+  }
+
+  .prose a {
+    @apply text-primary-600 hover:text-primary-700 font-medium;
+  }
+
+  .prose code {
+    @apply rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono text-gray-800;
+  }
+
+  .prose pre {
+    @apply mt-4 overflow-x-auto rounded-lg bg-gray-900 p-4;
+  }
+
+  .prose pre code {
+    @apply bg-transparent p-0 text-gray-100;
+  }
+</style>

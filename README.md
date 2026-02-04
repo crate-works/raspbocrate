@@ -1,30 +1,74 @@
-# PARADISEC Pi System
+# RaspboCrate
 
-## Admin interface
+> Your trusted tool for managing catalogues in the field
 
-- A basic hono app
-- Will run in a docker container
-- It's job is to configure docker on the Pi
-- It will have the following features
-  - Manage which major applications are installed by manipulating a docker-compose
-  - Be able to load collections into the applications
-  - Either from an RO-Crate API endpoint or from a USB stick
+A Raspberry Pi-based system for managing RO-Crate catalogues in remote locations.
 
-## Pi Image builder
+**[View Documentation & Downloads](https://raspbocrate.inodes.dev)**
 
-- A script that runs out of GitHub Actions and every week builds a new Raspberry
-  Pi image with the latest updates and software.
-- This will be based on Raspberry Pi OS Lite (64-bit) and will include:
-  - Docker
-  - Docker Compose
-- It will contain and admin docker-compose.yml
-- it hosts the admin interface which allows the Pi to be configured via a web interface.
-- This will run on /admin when you hit the server
-- If an Internet connection is available it will check for updates to the admin
-  interface and pull them down and restart the container if needed.
-- Maybe just use watchtower for this?
+---
 
-## Applications
+## Development
 
-- Oni UI
-- Omeka-S
+### Prerequisites
+
+- Node.js 22+
+- pnpm 10+
+- Docker and Docker Compose
+
+### Project Structure
+
+- `packages/raspbocrate/` - React admin interface
+- `packages/raspbocapi/` - Fastify RO-Crate API
+- `image-builder/` - Raspberry Pi image builder
+- `website/` - Documentation site
+
+### Getting Started
+
+1. Install dependencies:
+
+   ```bash
+   pnpm install
+   ```
+
+2. Start development services:
+
+   ```bash
+   docker compose up -d
+   ```
+
+3. Run the admin interface:
+
+   ```bash
+   cd packages/raspbocrate
+   pnpm dev
+   ```
+
+4. Run the API:
+
+   ```bash
+   cd packages/raspbocapi
+   pnpm dev
+   ```
+
+### Building the Pi Image
+
+See [image-builder/README.md](image-builder/README.md) for instructions.
+
+### Running Tests
+
+```bash
+pnpm test
+```
+
+### Code Style
+
+This project uses Biome for linting and formatting:
+
+```bash
+pnpm lint:biome
+```
+
+## Licence
+
+ISC

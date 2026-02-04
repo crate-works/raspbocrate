@@ -1,0 +1,48 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="border-t border-gray-200 bg-white">
+  <div class="container-wide py-8">
+    <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
+      <div class="flex items-center gap-2 text-sm text-gray-600">
+        <span>&copy; {currentYear}</span>
+        <a
+          href="https://paradisec.org.au"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="font-medium text-primary-600 hover:text-primary-700"
+        >
+          PARADISEC
+        </a>
+      </div>
+
+      <div class="flex items-center gap-6">
+        <a
+          href="https://github.com/paradisec-archive/raspbocrate"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-sm text-gray-600 hover:text-gray-900"
+        >
+          GitHub
+        </a>
+        <a
+          href="https://github.com/paradisec-archive/raspbocrate/releases"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-sm text-gray-600 hover:text-gray-900"
+        >
+          Releases
+        </a>
+        <a
+          href="https://github.com/paradisec-archive/raspbocrate/issues"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-sm text-gray-600 hover:text-gray-900"
+        >
+          Report Issue
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>

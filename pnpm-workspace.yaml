@@ -1,7 +1,9 @@
 packages:
   - packages/*
+  - website
 
 onlyBuiltDependencies:
   - '@prisma/engines'
   - esbuild
   - prisma
+  - sharp

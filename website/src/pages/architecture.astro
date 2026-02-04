@@ -1,0 +1,225 @@
+---
+import Architecture from '../components/Architecture.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Architecture"
+  description="Learn about the technical architecture of RaspboCrate and how its components work together."
+>
+  <Header currentPath="/architecture" />
+
+  <main class="flex-1">
+    <div class="bg-gray-50 py-12">
+      <div class="container-narrow">
+        <h1 class="text-4xl font-bold tracking-tight text-gray-900">Architecture</h1>
+        <p class="mt-4 text-lg text-gray-600">
+          Understanding how RaspboCrate components work together.
+        </p>
+      </div>
+    </div>
+
+    <div class="container-narrow py-12">
+      <div class="prose prose-gray max-w-none">
+        <h2>Overview</h2>
+        <p>
+          RaspboCrate is built as a set of Docker containers orchestrated with Docker Compose.
+          This architecture ensures easy deployment, updates, and maintenance while running
+          on resource-constrained hardware like the Raspberry Pi.
+        </p>
+      </div>
+
+      <div class="my-12">
+        <Architecture preview={false} />
+      </div>
+
+      <div class="prose prose-gray max-w-none">
+        <h2>Components</h2>
+
+        <h3>raspbocrate (Admin Interface)</h3>
+        <p>
+          The admin interface is a React application that provides a web-based UI for
+          managing the RaspboCrate system. It allows users to:
+        </p>
+        <ul>
+          <li>Configure system settings</li>
+          <li>Import collections from USB drives</li>
+          <li>Manage installed applications</li>
+          <li>Monitor system status</li>
+        </ul>
+        <p>
+          Built with React, TypeScript, and Tailwind CSS, it communicates with the API
+          via REST endpoints.
+        </p>
+
+        <h3>raspbocapi (API Server)</h3>
+        <p>
+          The API server is a Fastify-based Node.js application that handles:
+        </p>
+        <ul>
+          <li>RO-Crate data processing and indexing</li>
+          <li>USB drive detection and data import</li>
+          <li>Configuration management</li>
+          <li>Communication between the admin UI and backend services</li>
+        </ul>
+        <p>
+          It uses Prisma as an ORM for database operations and provides a RESTful API
+          for the admin interface.
+        </p>
+
+        <h3>oni-ui (Catalogue Browser)</h3>
+        <p>
+          Oni UI is a Vue.js application for browsing and searching RO-Crate catalogues.
+          It provides:
+        </p>
+        <ul>
+          <li>Full-text search across all indexed content</li>
+          <li>Faceted filtering by collection, language, and other metadata</li>
+          <li>Detailed views of collections, items, and files</li>
+          <li>Responsive design for various screen sizes</li>
+        </ul>
+
+        <h3>OpenSearch</h3>
+        <p>
+          OpenSearch (a fork of Elasticsearch) provides the search functionality for
+          the system. It:
+        </p>
+        <ul>
+          <li>Indexes RO-Crate metadata for fast retrieval</li>
+          <li>Supports full-text search with relevance ranking</li>
+          <li>Enables faceted navigation and filtering</li>
+          <li>Handles aggregations for statistics and visualisations</li>
+        </ul>
+
+        <h3>MariaDB</h3>
+        <p>
+          MariaDB serves as the relational database for storing:
+        </p>
+        <ul>
+          <li>System configuration</li>
+          <li>User preferences</li>
+          <li>Import history and status</li>
+          <li>Application state</li>
+        </ul>
+
+        <h2>Data Flow</h2>
+
+        <h3>USB Import Process</h3>
+        <ol>
+          <li>User inserts a USB drive containing RO-Crate data</li>
+          <li>The API server detects the USB drive and scans for RO-Crate metadata</li>
+          <li>User selects collections to import via the admin interface</li>
+          <li>The API server copies data to local storage</li>
+          <li>RO-Crate metadata is parsed and indexed into OpenSearch</li>
+          <li>Import status is recorded in MariaDB</li>
+          <li>Collections become searchable in Oni UI</li>
+        </ol>
+
+        <h3>Search Request Flow</h3>
+        <ol>
+          <li>User enters a search query in Oni UI</li>
+          <li>Oni UI sends the query to the API server</li>
+          <li>The API server constructs an OpenSearch query</li>
+          <li>OpenSearch returns matching documents</li>
+          <li>Results are formatted and returned to Oni UI</li>
+          <li>Oni UI displays the search results with facets</li>
+        </ol>
+
+        <h2>Networking</h2>
+        <p>
+          All containers communicate over a Docker bridge network. The nginx reverse
+          proxy routes external requests to the appropriate service:
+        </p>
+        <ul>
+          <li><code>/</code> &rarr; Oni UI (catalogue browser)</li>
+          <li><code>/admin</code> &rarr; raspbocrate (admin interface)</li>
+          <li><code>/api</code> &rarr; raspbocapi (API server)</li>
+        </ul>
+        <p>
+          This allows the entire system to be accessed through a single hostname
+          and port.
+        </p>
+
+        <h2>Resource Considerations</h2>
+        <p>
+          RaspboCrate is designed to run efficiently on Raspberry Pi hardware:
+        </p>
+        <ul>
+          <li>
+            <strong>Memory:</strong> OpenSearch is configured with reduced heap size
+            suitable for 4GB+ RAM systems
+          </li>
+          <li>
+            <strong>Storage:</strong> Data is stored on the SD card by default, but can
+            be configured to use external storage
+          </li>
+          <li>
+            <strong>CPU:</strong> Multi-architecture images (amd64/arm64) ensure native
+            performance on Pi hardware
+          </li>
+        </ul>
+
+        <h2>Development</h2>
+        <p>
+          For development setup and contributing to RaspboCrate, see the
+          <a
+            href="https://github.com/paradisec-archive/raspbocrate"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub repository
+          </a>.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  @reference "../styles/global.css";
+
+  .prose h2 {
+    @apply mt-12 text-2xl font-bold text-gray-900;
+  }
+
+  .prose h2:first-of-type {
+    @apply mt-0;
+  }
+
+  .prose h3 {
+    @apply mt-8 text-xl font-semibold text-gray-900;
+  }
+
+  .prose p {
+    @apply mt-4 text-gray-600;
+  }
+
+  .prose ul,
+  .prose ol {
+    @apply mt-4 space-y-2 pl-6 text-gray-600;
+  }
+
+  .prose ul {
+    @apply list-disc;
+  }
+
+  .prose ol {
+    @apply list-decimal;
+  }
+
+  .prose li {
+    @apply pl-2;
+  }
+
+  .prose a {
+    @apply text-primary-600 hover:text-primary-700 font-medium;
+  }
+
+  .prose code {
+    @apply rounded bg-gray-100 px-1.5 py-0.5 text-sm font-mono text-gray-800;
+  }
+</style>
