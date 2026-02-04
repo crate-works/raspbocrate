@@ -19,6 +19,7 @@ services:
     environment:
       - discovery.type=single-node
       - plugins.security.disabled=true
+      # NOTE: We would use "password" but Opensearch requires a more complex password
       - OPENSEARCH_INITIAL_ADMIN_PASSWORD=bjv7QYK*zxw9nyd5dpb
     ports:
       - "9200:9200"
