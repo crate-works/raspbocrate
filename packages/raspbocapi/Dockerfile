@@ -1,23 +1,79 @@
-FROM node:22-alpine
+################
+# Setup pnpm cache
+################
+FROM node:22-slim AS base
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Cache pnpm store
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+# Enable corepack for pnpm
+RUN corepack enable
+
+################
+# Install dependencies
+################
+FROM base AS deps
 
 WORKDIR /app
 
-# Copy workspace root files
+# Copy package files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY packages/raspbocapi/package.json ./packages/raspbocapi/
 
-# Copy the rasbocapi package
-COPY packages/rasbocapi ./packages/rasbocapi/
+# Install all dependencies (including dev for build)
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+################
+# Build the application
+################
+FROM base AS builder
 
-# Generate Prisma client
-WORKDIR /app/packages/rasbocapi
-RUN pnpm prisma generate
+WORKDIR /app
 
+# Copy dependencies from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+
+WORKDIR /app/packages/raspbocapi
+
+COPY --from=deps /app/packages/raspbocapi/node_modules ./node_modules
+
+# Copy source files
+COPY packages/raspbocapi/package.json ./
+COPY packages/raspbocapi/app.ts ./
+COPY packages/raspbocapi/prisma ./prisma
+COPY packages/raspbocapi/prisma.config.ts ./
+
+# For prisma
+RUN apt-get update -y && apt-get install -y openssl
+
+# Just needs a valid DATABASE_URL, the database doesn't have to exist at this point
+ENV DATABASE_URL="mysql://localhost:3306"
+RUN pnpm exec prisma generate
+
+################
+# Build the application
+################
+FROM node:22-slim AS prod
+
+# Create non-root user for security
+RUN addgroup --system --gid 1001 app && \
+  adduser --system --uid 1001 app
+
+# Switch to non-root user
+USER app
+
+WORKDIR /app
+
+COPY --from=builder /app/packages/raspbocapi ./
+COPY --from=deps /app/packages/raspbocapi ./
+
+# Expose the application port
 EXPOSE 3000
 
-CMD ["node", "app.js"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
+
+# Start the application
+CMD ["node", "app.ts"]

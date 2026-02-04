@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "lint:biome": "biome check .",
-    "docker:raspbocrate": "docker build -d packages/raspbocrate/Dockerfile -t raspbocrate ."
+    "docker:raspbocrate": "docker build -f packages/raspbocrate/Dockerfile -t raspbocrate .",
+    "docker:raspbocapi": "docker build -f packages/raspbocapi/Dockerfile -t raspbocapi ."
   },
   "keywords": [],
   "author": "",

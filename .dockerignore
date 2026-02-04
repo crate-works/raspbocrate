@@ -4,3 +4,4 @@ node_modules
 *.md
 dist
 packages/raspbocrate/src/generated
+packages/raspocapi/generated
