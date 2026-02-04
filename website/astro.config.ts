@@ -3,9 +3,8 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://raspbocrate.inodes.dev',
   vite: {
     plugins: [tailwindcss()],
   },
-  // site: 'https://raspbocrate.inodes.dev',
-  // output: 'static',
 });
