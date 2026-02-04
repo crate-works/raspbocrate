@@ -1,0 +1,65 @@
+services:
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: raspbocapi
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  opensearch:
+    image: opensearchproject/opensearch:3
+    environment:
+      - discovery.type=single-node
+      - plugins.security.disabled=true
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=bjv7QYK*zxw9nyd5dpb
+    ports:
+      - "9200:9200"
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200 | grep -q cluster_name"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  raspbocapi:
+    image: ghcr.io/paradisec-archive/raspbocapi:main
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: mysql://root:password@mysql:3306/raspbocapi
+    ports:
+      - "3000:3000"
+
+  raspbocrate:
+    image: ghcr.io/paradisec-archive/raspbocrate:main
+    depends_on:
+      mysql:
+        condition: service_healthy
+      opensearch:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: mysql://root:password@mysql:3306/raspbocapi
+    ports:
+      - "4000:3000"
+
+  oni-ui:
+    image: ghcr.io/language-research-technology/oni-ui:new-api
+    ports:
+      - "5000:80"
+    volumes:
+      - /opt/raspocrate/oni-ui.json:/configuration.json
+      - /opt/raspocrate/logo.png:/usr/share/nginx/html/logo.png
+
+volumes:
+  mysql_data:
+  opensearch_data:
