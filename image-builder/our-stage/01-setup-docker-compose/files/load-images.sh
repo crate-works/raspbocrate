@@ -17,4 +17,4 @@ done
 
 # Clean up after loading
 rm -rf "$IMAGE_DIR"
-systemctl disable raspocrate-load-images.service
+systemctl disable raspbocrate-load-images.service

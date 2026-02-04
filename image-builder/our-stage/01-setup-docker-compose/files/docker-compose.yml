@@ -57,8 +57,8 @@ services:
     ports:
       - "5000:80"
     volumes:
-      - /opt/raspocrate/oni-ui.json:/configuration.json
-      - /opt/raspocrate/logo.png:/usr/share/nginx/html/logo.png
+      - /opt/raspbocrate/oni-ui.json:/configuration.json
+      - /opt/raspbocrate/logo.png:/usr/share/nginx/html/logo.png
 
 volumes:
   mysql_data:
