@@ -12,7 +12,6 @@
     "@prisma/adapter-mariadb": "^7.3.0",
     "@prisma/client": "^7.3.0",
     "arocapi": "^2.0.1",
-    "dotenv": "^17.2.3",
     "fastify": "^5.7.4"
   },
   "devDependencies": {
@@ -21,8 +20,9 @@
     "prisma": "^7.3.0"
   },
   "scripts": {
-    "start": "node app.ts",
-    "dev": "node --watch app.ts"
+    "start": "node --env-file=.env app.ts",
+    "dev": "node --env-file=.env --watch app.ts",
+    "prisma": "pnpm dlx dotenv-cli -f .env -- prisma"
   },
   "keywords": [],
   "author": "",
