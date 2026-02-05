@@ -30,29 +30,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Free disk space
-        run: |
-          echo "Disk space before cleanup:"
-          df -h /
-
-          # Remove unnecessary packages to free up space
-          df -h /
-          sudo rm -rf /usr/share/dotnet
-          df -h /
-          sudo rm -rf /usr/local/lib/android
-          df -h /
-          sudo rm -rf /opt/ghc
-          df -h /
-          sudo rm -rf /opt/hostedtoolcache/CodeQL
-          df -h /
-          sudo rm -rf /usr/local/share/boost
-          df -h /
-          sudo rm -rf /usr/share/swift
-          df -h /
-
-          echo "Disk space after cleanup:"
-          df -h /
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -108,11 +85,6 @@ jobs:
           echo "image_name=$COMPRESSED_NAME" >> "$GITHUB_OUTPUT"
           echo "checksum_path=${COMPRESSED_PATH}.sha256" >> "$GITHUB_OUTPUT"
           echo "checksum_name=${COMPRESSED_NAME}.sha256" >> "$GITHUB_OUTPUT"
-
-      - name: Did we free up enough disk space?
-        run: |
-          echo "Disk space after image build:"
-          df -h /
 
       - name: Upload artifact
         if: github.event_name != 'push' || !startsWith(github.ref, 'refs/tags/')

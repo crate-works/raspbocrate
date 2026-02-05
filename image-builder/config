@@ -1,8 +1,10 @@
 IMG_NAME="raspbocrate"
-PI_GEN_RELEASE="Raspbocrate"
+PI_GEN_RELEASE="RaspboCrate"
 APT_PROXY="http://172.17.0.1:3142"
 DEPLOY_COMPRESSION=none
 LOCALE_DEFAULT=en_AU.UTF-8
 TARGET_HOSTNAME=raspbocrate
+KEYBOARD_MAP="au"
+KEYBOARD_LAYOUT="English (Australian)"
 TIMEZONE_DEFAULT="Australia/Sydney"
 STAGE_LIST="stage0 stage1 stage2 our-stage"

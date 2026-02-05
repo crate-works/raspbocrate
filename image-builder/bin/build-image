@@ -8,12 +8,12 @@ CONTINUE_BUILD=false
 # Parse arguments
 for arg in "$@"; do
   case $arg in
-    --ci)
-      CI_MODE=true
-      ;;
-    continue)
-      CONTINUE_BUILD=true
-      ;;
+  --ci)
+    CI_MODE=true
+    ;;
+  continue)
+    CONTINUE_BUILD=true
+    ;;
   esac
 done
 
@@ -32,6 +32,7 @@ else
   git -C pi-gen restore .
   git -C pi-gen pull
 fi
+echo
 
 rm -rf pi-gen/our-stage
 cp -ar our-stage pi-gen
@@ -45,9 +46,10 @@ git -C pi-gen apply ../pi-gen-fixes.patch
 if [ "$CI_MODE" = true ]; then
   # CI mode: create config without APT_PROXY
   CONFIG_FILE="config-ci"
-  grep -v '^APT_PROXY=' config > "$CONFIG_FILE"
+  grep -v '^APT_PROXY=' config >"$CONFIG_FILE"
   echo "Using CI config (no APT_PROXY):"
   cat "$CONFIG_FILE"
+  echo
 else
   # Local mode: start apt-cacher-ng
   CONFIG_FILE="config"
