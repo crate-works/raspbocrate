@@ -47,6 +47,7 @@ jobs:
         working-directory: image-builder
         run: |
           ./bin/build-image --ci
+          sudo chown -R $USER:$USER pi-gen/deploy
 
       - name: Find and compress image
         id: compress
