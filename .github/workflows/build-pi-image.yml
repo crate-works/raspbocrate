@@ -97,6 +97,21 @@ jobs:
             ${{ steps.compress.outputs.checksum_path }}
           retention-days: 14
 
+      - name: Extract changelog for release
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+        id: changelog
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          # Extract section for this version from CHANGELOG.md
+          if [ -f CHANGELOG.md ]; then
+            BODY=$(awk "/^## \[${VERSION}\]/{flag=1; next} /^## \[/{flag=0} flag" CHANGELOG.md)
+            echo "body<<EOF" >> "$GITHUB_OUTPUT"
+            echo "$BODY" >> "$GITHUB_OUTPUT"
+            echo "EOF" >> "$GITHUB_OUTPUT"
+          else
+            echo "body=" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Create GitHub Release
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
@@ -104,7 +119,8 @@ jobs:
           files: |
             ${{ steps.compress.outputs.image_path }}
             ${{ steps.compress.outputs.checksum_path }}
-          generate_release_notes: true
+          body: ${{ steps.changelog.outputs.body }}
+          generate_release_notes: ${{ steps.changelog.outputs.body == '' }}
 
       - name: Upload logs on failure
         if: failure()
