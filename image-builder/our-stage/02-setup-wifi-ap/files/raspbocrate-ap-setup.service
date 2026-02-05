@@ -1,0 +1,13 @@
+[Unit]
+Description=RaspboCrate WiFi AP Setup
+Before=hostapd.service dnsmasq.service
+After=network-pre.target
+Wants=network-pre.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/raspbocrate/ap-setup.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
