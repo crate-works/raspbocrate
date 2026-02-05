@@ -16,7 +16,7 @@ env:
 jobs:
   build-image:
     name: Build Raspberry Pi Image
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 120
     # Only run if the triggering workflow succeeded (or if triggered by tag/dispatch)
     if: >
@@ -46,7 +46,6 @@ jobs:
       - name: Build image
         working-directory: image-builder
         run: |
-          sudo apt-get install -y qemu-user-binfmt
           ./bin/build-image --ci
 
       - name: Find and compress image
