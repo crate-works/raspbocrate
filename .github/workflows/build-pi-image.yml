@@ -46,7 +46,7 @@ jobs:
       - name: Build image
         working-directory: image-builder
         run: |
-          apt install qemu-user-binfmt -y
+          sudo apt-get install -y qemu-user-binfmt
           ./bin/build-image --ci
 
       - name: Find and compress image
