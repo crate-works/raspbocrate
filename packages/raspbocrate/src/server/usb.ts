@@ -23,12 +23,7 @@ const extractUsbPartitions = (devices: LsblkDevice[]): LsblkDevice[] => {
 
   devices.forEach((device) => {
     // Check if this is a USB disk with children (partitions)
-    if (
-      device.tran === 'usb' &&
-      device.hotplug &&
-      device.rm &&
-      device.children
-    ) {
+    if (device.tran === 'usb' && device.rm && device.children) {
       device.children.forEach((child) => {
         // Only include mounted partitions
         if (child.type === 'part' && child.mountpoint) {
@@ -47,7 +42,7 @@ export const getServerUsbDrives = createServerFn().handler(
       const { stdout } = await execFileAsync('lsblk', [
         '-J',
         '-o',
-        'NAME,TYPE,MOUNTPOINT,SIZE,LABEL,HOTPLUG,RM,TRAN',
+        'NAME,TYPE,MOUNTPOINT,SIZE,LABEL,RM,TRAN',
       ]);
 
       const lsblkOutput: LsblkOutput = JSON.parse(stdout);
