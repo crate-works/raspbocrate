@@ -47,7 +47,7 @@ jobs:
         working-directory: image-builder
         run: |
           ./bin/build-image --ci
-          sudo chown -R $USER:$USER pi-gen/deploy
+          sudo chown -R $USER:$USER deploy
 
       - name: Find and compress image
         id: compress
@@ -56,8 +56,8 @@ jobs:
           IMAGE_PATH=$(find image-builder/deploy -name "*.img" -type f | head -1)
 
           if [ -z "$IMAGE_PATH" ]; then
-            echo "Error: No image file found in image-builder/pi-gen/deploy"
-            ls -la image-builder/pi-gen/deploy/
+            echo "Error: No image file found in image-builder/deploy"
+            ls -la image-builder/deploy/
             exit 1
           fi
 
