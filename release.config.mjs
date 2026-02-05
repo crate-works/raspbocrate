@@ -24,5 +24,17 @@ export default {
         assets: ['package.json', 'CHANGELOG.md'],
       },
     ],
+    [
+      '@semantic-release/github',
+      {
+        assets: [
+          { path: 'pi-image/*.img.xz', label: 'Raspberry Pi Image' },
+          {
+            path: 'pi-image/*.img.xz.sha256',
+            label: 'Raspberry Pi Image Checksum',
+          },
+        ],
+      },
+    ],
   ],
 };

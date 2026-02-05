@@ -13,32 +13,267 @@ permissions:
   contents: write
   issues: write
   pull-requests: write
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
 
 jobs:
-  release:
+  determine-version:
+    name: Determine version
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      should-release: ${{ steps.version.outputs.should-release }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          persist-credentials: false
 
-      - uses: pnpm/action-setup@v4
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
 
-      - uses: actions/setup-node@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: 'pnpm'
 
-      - run: pnpm install
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      - name: Release
+      - name: Determine next version
+        id: version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DRY_RUN: ${{ inputs.dry_run }}
         run: |
-          if [ "$DRY_RUN" = "true" ]; then
-            npx semantic-release --dry-run
+          OUTPUT=$(npx semantic-release --dry-run 2>&1) || true
+          echo "$OUTPUT"
+
+          # Extract version from dry-run output
+          VERSION=$(echo "$OUTPUT" | grep -oP 'The next release version is \K[0-9]+\.[0-9]+\.[0-9]+' || true)
+
+          if [ -n "$VERSION" ]; then
+            echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+            echo "should-release=true" >> "$GITHUB_OUTPUT"
+            echo "Next version: ${VERSION}"
           else
-            npx semantic-release
+            echo "version=" >> "$GITHUB_OUTPUT"
+            echo "should-release=false" >> "$GITHUB_OUTPUT"
+            echo "No release needed"
           fi
+
+  build-raspbocrate:
+    name: Build and push raspbocrate
+    needs: determine-version
+    if: needs.determine-version.outputs.should-release == 'true' && !inputs.dry_run
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine tags
+        id: tags
+        env:
+          VERSION: ${{ needs.determine-version.outputs.version }}
+          IMAGE: ghcr.io/paradisec-archive/raspbocrate
+        run: |
+          MAJOR_MINOR="${VERSION%.*}"
+
+          TAGS="${IMAGE}:${VERSION}"
+          TAGS="${TAGS},${IMAGE}:${MAJOR_MINOR}"
+          TAGS="${TAGS},${IMAGE}:latest"
+
+          echo "tags=${TAGS}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: packages/raspbocrate/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.tags.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  build-raspbocapi:
+    name: Build and push raspbocapi
+    needs: determine-version
+    if: needs.determine-version.outputs.should-release == 'true' && !inputs.dry_run
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine tags
+        id: tags
+        env:
+          VERSION: ${{ needs.determine-version.outputs.version }}
+          IMAGE: ghcr.io/paradisec-archive/raspbocapi
+        run: |
+          MAJOR_MINOR="${VERSION%.*}"
+
+          TAGS="${IMAGE}:${VERSION}"
+          TAGS="${TAGS},${IMAGE}:${MAJOR_MINOR}"
+          TAGS="${TAGS},${IMAGE}:latest"
+
+          echo "tags=${TAGS}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: packages/raspbocapi/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.tags.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  build-pi-image:
+    name: Build Raspberry Pi image
+    needs: [determine-version, build-raspbocrate, build-raspbocapi]
+    if: needs.determine-version.outputs.should-release == 'true' && !inputs.dry_run
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 120
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build image
+        working-directory: image-builder
+        run: |
+          ./bin/build-image --ci
+          sudo chown -R $USER:$USER deploy
+
+      - name: Find and compress image
+        id: compress
+        run: |
+          # Find the generated image
+          IMAGE_PATH=$(find image-builder/deploy -name "*.img" -type f | head -1)
+
+          if [ -z "$IMAGE_PATH" ]; then
+            echo "Error: No image file found in image-builder/deploy"
+            ls -la image-builder/deploy/
+            exit 1
+          fi
+
+          echo "Found image: $IMAGE_PATH"
+          IMAGE_NAME=$(basename "$IMAGE_PATH")
+
+          # Compress with xz (maximum compression, multi-threaded)
+          echo "Compressing image..."
+          xz -9 -T0 -v "$IMAGE_PATH"
+
+          COMPRESSED_PATH="${IMAGE_PATH}.xz"
+          COMPRESSED_NAME="${IMAGE_NAME}.xz"
+
+          echo "Compressed image: $COMPRESSED_PATH"
+          ls -lh "$COMPRESSED_PATH"
+
+          # Generate checksum
+          cd "$(dirname "$COMPRESSED_PATH")"
+          sha256sum "$COMPRESSED_NAME" > "${COMPRESSED_NAME}.sha256"
+
+          echo "Checksum:"
+          cat "${COMPRESSED_NAME}.sha256"
+
+          # Set outputs
+          echo "image_path=$COMPRESSED_PATH" >> "$GITHUB_OUTPUT"
+          echo "image_name=$COMPRESSED_NAME" >> "$GITHUB_OUTPUT"
+          echo "checksum_path=${COMPRESSED_PATH}.sha256" >> "$GITHUB_OUTPUT"
+          echo "checksum_name=${COMPRESSED_NAME}.sha256" >> "$GITHUB_OUTPUT"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: raspbocrate-image
+          path: |
+            ${{ steps.compress.outputs.image_path }}
+            ${{ steps.compress.outputs.checksum_path }}
+          retention-days: 14
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pi-gen-logs
+          path: |
+            image-builder/pi-gen/deploy/*.log
+            image-builder/pi-gen/work/**/*.log
+          retention-days: 7
+
+  create-release:
+    name: Create release
+    needs: [determine-version, build-pi-image]
+    if: needs.determine-version.outputs.should-release == 'true' && !inputs.dry_run
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download Pi image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: raspbocrate-image
+          path: pi-image
+
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
