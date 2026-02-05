@@ -52,7 +52,7 @@ jobs:
         id: compress
         run: |
           # Find the generated image
-          IMAGE_PATH=$(find image-builder/pi-gen/deploy -name "*.img" -type f | head -1)
+          IMAGE_PATH=$(find image-builder/deploy -name "*.img" -type f | head -1)
 
           if [ -z "$IMAGE_PATH" ]; then
             echo "Error: No image file found in image-builder/pi-gen/deploy"
