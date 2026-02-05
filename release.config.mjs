@@ -7,6 +7,12 @@ export default {
     '@semantic-release/commit-analyzer',
     '@semantic-release/release-notes-generator',
     [
+      '@semantic-release/exec',
+      {
+        verifyReleaseCmd: 'echo ${nextRelease.version} > .version',
+      },
+    ],
+    [
       '@semantic-release/changelog',
       {
         changelogFile: 'CHANGELOG.md',
