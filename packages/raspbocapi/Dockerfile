@@ -48,7 +48,7 @@ COPY packages/raspbocapi/prisma.config.ts ./
 RUN apt-get update -y && apt-get install -y openssl
 
 # Just needs a valid DATABASE_URL, the database doesn't have to exist at this point
-ENV DATABASE_URL="mysql://localhost:3306"
+ENV DATABASE_URL="mysql://mysql:3306"
 RUN pnpm exec prisma generate
 
 ################
