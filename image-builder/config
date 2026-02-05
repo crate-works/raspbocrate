@@ -7,4 +7,5 @@ TARGET_HOSTNAME=raspbocrate
 KEYBOARD_MAP="au"
 KEYBOARD_LAYOUT="English (Australian)"
 TIMEZONE_DEFAULT="Australia/Sydney"
+WPA_COUNTRY="AU"
 STAGE_LIST="stage0 stage1 stage2 our-stage"
