@@ -6,9 +6,10 @@ import { useState } from 'react';
 import z from 'zod';
 import { CrateTreeList } from '@/components/CrateTree';
 import { Button } from '@/components/ui/button';
+import { getServerDrives } from '@/server/drives';
 import { type ImportStats, processCrateTree } from '@/server/import';
 import { getServerDriveContents } from '@/server/rocrate';
-import { getServerDrives } from '@/server/drives';
+import type { Drive } from '@/types/usb';
 
 type ImportResult = {
   success: boolean;
@@ -90,7 +91,7 @@ const useDriveInfo = (driveName: string) => {
 const DriveDetailPage = () => {
   const { driveName } = Route.useParams();
   const { data: drive } = useDriveInfo(driveName);
-  const [importStatus, setImportStatus] = useState<string | null>(null);
+  const [importStatus, setImportStatus] = useState<ImportStatus | null>(null);
 
   // Can't call hooks conditionally, so we need a wrapper component
   if (!drive) {
@@ -120,17 +121,16 @@ const DriveDetailPage = () => {
   );
 };
 
-type DriveInfo = {
-  name: string;
-  label: string;
-  mountpoint: string;
-  size: string | null;
+type ImportStatus = {
+  message: string;
+  errors: string[];
+  failed: boolean;
 };
 
 type DriveDetailContentProps = {
-  drive: DriveInfo;
-  importStatus: string | null;
-  setImportStatus: (status: string | null) => void;
+  drive: Drive;
+  importStatus: ImportStatus | null;
+  setImportStatus: (status: ImportStatus | null) => void;
 };
 
 const DriveDetailContent = ({
@@ -151,22 +151,33 @@ const DriveDetailContent = ({
         const { stats } = result;
         const created = stats.entitiesCreated + stats.filesCreated;
         const updated = stats.entitiesUpdated + stats.filesUpdated;
-        const errorCount = stats.errors.length;
+        const hasErrors = stats.errors.length > 0;
 
         let message = `Imported: ${created} created, ${updated} updated`;
-        if (errorCount > 0) {
-          message += ` (${errorCount} errors)`;
+        if (hasErrors) {
+          message += ` (${stats.errors.length} errors)`;
         }
-        setImportStatus(message);
+        setImportStatus({ message, errors: stats.errors, failed: false });
       } else {
-        setImportStatus(`Import failed: ${result.error || 'Unknown error'}`);
+        setImportStatus({
+          message: `Import failed: ${result.error || 'Unknown error'}`,
+          errors: [],
+          failed: true,
+        });
       }
     } catch (error) {
       const message =
         error instanceof Error ? error.message : 'Unknown error occurred';
-      setImportStatus(`Import failed: ${message}`);
+      setImportStatus({
+        message: `Import failed: ${message}`,
+        errors: [],
+        failed: true,
+      });
     }
   };
+
+  const hasErrors =
+    importStatus && (importStatus.failed || importStatus.errors.length > 0);
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-6">
@@ -208,12 +219,19 @@ const DriveDetailContent = ({
       {importStatus && (
         <div
           className={`rounded-lg border p-3 text-sm ${
-            importStatus.includes('failed')
+            hasErrors
               ? 'border-red-500/50 bg-red-500/10 text-red-700 dark:text-red-400'
               : 'border-green-500/50 bg-green-500/10 text-green-700 dark:text-green-400'
           }`}
         >
-          {importStatus}
+          <p>{importStatus.message}</p>
+          {importStatus.errors.length > 0 && (
+            <ul className="mt-2 list-disc pl-4 space-y-1">
+              {importStatus.errors.map((err) => (
+                <li key={err}>{err}</li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
 

@@ -1,6 +1,6 @@
 export type Drive = {
   name: string;
-  mountpoint: string | null;
+  mountpoint: string;
   size: string | null;
   label: string | null;
   hasCatalog: boolean;
