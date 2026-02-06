@@ -1,3 +1,22 @@
+# [1.1.0](https://github.com/paradisec-archive/raspbocrate/compare/v1.0.0...v1.1.0) (2026-02-06)
+
+
+### Bug Fixes
+
+* devtools hydration issue ([ee3941f](https://github.com/paradisec-archive/raspbocrate/commit/ee3941fc24eb61d5f6cd0023a371e8c6249fb28c))
+* map oni-ui port to 80 on host ([f523e20](https://github.com/paradisec-archive/raspbocrate/commit/f523e2033941e028ae5cab4dbfc2d6c76c41e97d))
+* rasbocrate url ([7cb6596](https://github.com/paradisec-archive/raspbocrate/commit/7cb65968b8e03f6b94a43596286557f35ec69ec2))
+* **raspbocapi:** drop unused rocrate column from Entity table ([0672b73](https://github.com/paradisec-archive/raspbocrate/commit/0672b730a0f617ec1018d181fb62d3980e2c71fe))
+* **raspbocrate:** add notFoundComponent to root route ([b246b8e](https://github.com/paradisec-archive/raspbocrate/commit/b246b8ed249cb942579debb9afe3fa523bf750e0))
+* **raspbocrate:** fix entity ID resolution and file size parsing ([742d40e](https://github.com/paradisec-archive/raspbocrate/commit/742d40ef1bea9e4a30877e80da10fdfc93046175))
+
+
+### Features
+
+* **image-builder:** add USB drive automounting ([1a69076](https://github.com/paradisec-archive/raspbocrate/commit/1a6907632913cd41fe0f20e8f6fe5ec63a04b51e))
+* **raspbocrate:** add media directory scanning alongside USB drives ([a4a6de4](https://github.com/paradisec-archive/raspbocrate/commit/a4a6de4bb40c97d8912f90098d7be3f46a2f28ed))
+* **raspbocrate:** show import errors in drive detail page ([d4949a5](https://github.com/paradisec-archive/raspbocrate/commit/d4949a58e0603dec6564d54ac1c074d1fcac7072))
+
 # 1.0.0 (2026-02-06)
 
 
