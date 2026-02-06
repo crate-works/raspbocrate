@@ -28,7 +28,7 @@ services:
       retries: 5
 
   raspbocapi:
-    image: ghcr.io/paradisec-archive/raspbocapi:main
+    image: ghcr.io/paradisec-archive/raspbocapi
     depends_on:
       mysql:
         condition: service_healthy
@@ -40,11 +40,13 @@ services:
       DATABASE_HOST: mysql
       DATABASE_PORT: 3306
       OPENSEARCH_URL: http://opensearch:9200
+    ports:
+      - "3000:3000"
     volumes:
       - /media:/media:rslave
 
   raspbocrate:
-    image: ghcr.io/paradisec-archive/raspbocrate:main
+    image: ghcr.io/paradisec-archive/raspbocrate
     depends_on:
       mysql:
         condition: service_healthy
