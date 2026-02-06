@@ -72,14 +72,14 @@ import Layout from '../layouts/Layout.astro';
         <h2>Step 3: First boot</h2>
         <ol>
           <li>Insert the SD card into your Raspberry Pi</li>
-          <li>Connect an Ethernet cable (recommended) or ensure Wi-Fi credentials are configured</li>
+          <li>Connect to the <code>raspbocrate-XXX</code> Wi-Fi access point (no credentials required), or connect the Pi to your local network via Ethernet (DHCP must be available)</li>
           <li>Connect the power supply</li>
-          <li>Wait for the Pi to boot (first boot may take a few minutes as containers initialise)</li>
+          <li>Wait for the Pi to boot (first boot may take 5–10 minutes depending on your Pi as containers initialise)</li>
         </ol>
 
         <h2>Step 4: Access the admin interface</h2>
         <p>Once the Pi has booted, access the admin interface in your web browser:</p>
-        <pre><code>http://raspbocrate.local/admin</code></pre>
+        <pre><code>http://raspbocrate.local:5000</code></pre>
         <p>
           If <code>raspbocrate.local</code> doesn't resolve, you may need to find the Pi's IP
           address from your router and use that instead.
@@ -88,7 +88,7 @@ import Layout from '../layouts/Layout.astro';
         <h2>Importing data from USB</h2>
         <p>RaspboCrate makes it easy to import collections from USB drives:</p>
         <ol>
-          <li>Prepare your RO-Crate data on a USB drive</li>
+          <li>Prepare your RO-Crate data on a USB drive (it must have all the files in a catalog directory)</li>
           <li>Insert the USB drive into the Raspberry Pi</li>
           <li>Open the admin interface</li>
           <li>Navigate to the "Import" section</li>
