@@ -1,7 +1,7 @@
 [Unit]
 Description=Mount USB drive %i
-BindsTo=%i.device
-After=%i.device
+BindsTo=dev-%i.device
+After=dev-%i.device
 
 [Service]
 Type=oneshot
