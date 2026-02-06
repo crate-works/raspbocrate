@@ -9,6 +9,7 @@ export default {
     [
       '@semantic-release/exec',
       {
+        // biome-ignore lint/suspicious/noTemplateCurlyInString: not JS code
         verifyReleaseCmd: 'echo ${nextRelease.version} > .version',
       },
     ],
