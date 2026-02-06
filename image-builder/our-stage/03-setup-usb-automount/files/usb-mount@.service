@@ -1,0 +1,10 @@
+[Unit]
+Description=Mount USB drive %i
+BindsTo=%i.device
+After=%i.device
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/opt/raspbocrate/usb-mount.sh mount %i
+ExecStop=/opt/raspbocrate/usb-mount.sh unmount %i

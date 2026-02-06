@@ -40,6 +40,8 @@ services:
       DATABASE_HOST: mysql
       DATABASE_PORT: 3306
       OPENSEARCH_URL: http://opensearch:9200
+    volumes:
+      - /media:/media:rslave
 
   raspbocrate:
     image: ghcr.io/paradisec-archive/raspbocrate:main
@@ -52,6 +54,8 @@ services:
       DATABASE_URL: mysql://root:password@mysql:3306/raspbocapi
     ports:
       - "4000:3000"
+    volumes:
+      - /media:/media:rslave
 
   oni-ui:
     image: ghcr.io/language-research-technology/oni-ui:new-api
