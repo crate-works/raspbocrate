@@ -1,17 +1,17 @@
-import type { UsbDrive } from '@/types/usb';
+import type { Drive } from '@/types/usb';
 import { DriveCard } from './DriveCard';
 
 type DrivesListProps = {
-  drives: UsbDrive[];
+  drives: Drive[];
 };
 
 export const DrivesList = ({ drives }: DrivesListProps) => {
   if (drives.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-400 text-lg">No USB drives detected</p>
+        <p className="text-gray-400 text-lg">No drives detected</p>
         <p className="text-gray-500 text-sm mt-2">
-          Insert a USB drive and refresh the page
+          Insert a USB drive or add a media directory and refresh the page
         </p>
       </div>
     );

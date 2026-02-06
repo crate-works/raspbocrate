@@ -22,7 +22,7 @@ import {
 
 const navImport = [
   {
-    title: 'USB Drives',
+    title: 'Drives',
     url: '/drives',
     icon: HardDrive,
   },

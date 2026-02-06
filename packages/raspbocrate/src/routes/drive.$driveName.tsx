@@ -8,7 +8,7 @@ import { CrateTreeList } from '@/components/CrateTree';
 import { Button } from '@/components/ui/button';
 import { type ImportStats, processCrateTree } from '@/server/import';
 import { getServerDriveContents } from '@/server/rocrate';
-import { getServerUsbDrives } from '@/server/usb';
+import { getServerDrives } from '@/server/drives';
 
 type ImportResult = {
   success: boolean;
@@ -78,11 +78,11 @@ const useDriveContents = (mountpoint: string) => {
 };
 
 const useDriveInfo = (driveName: string) => {
-  const getUsbDrives = useServerFn(getServerUsbDrives);
+  const getDrives = useServerFn(getServerDrives);
 
   return useSuspenseQuery({
-    queryKey: ['usb-drives'],
-    queryFn: () => getUsbDrives(),
+    queryKey: ['drives'],
+    queryFn: () => getDrives(),
     select: (drives) => drives.find((d) => d.name === driveName),
   });
 };
@@ -124,6 +124,7 @@ type DriveInfo = {
   name: string;
   label: string;
   mountpoint: string;
+  size: string | null;
 };
 
 type DriveDetailContentProps = {

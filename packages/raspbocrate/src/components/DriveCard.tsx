@@ -1,14 +1,15 @@
 import { Link } from '@tanstack/react-router';
-import { FolderOpen, FolderX, HardDrive } from 'lucide-react';
+import { Folder, FolderOpen, FolderX, HardDrive } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { UsbDrive } from '@/types/usb';
+import type { Drive } from '@/types/usb';
 
 type DriveCardProps = {
-  drive: UsbDrive;
+  drive: Drive;
 };
 
 export const DriveCard = ({ drive }: DriveCardProps) => {
   const isDisabled = !drive.hasCatalog;
+  const DriveIcon = drive.source === 'media' ? Folder : HardDrive;
 
   const content = (
     <div className="flex items-start gap-4">
@@ -18,7 +19,7 @@ export const DriveCard = ({ drive }: DriveCardProps) => {
           isDisabled ? 'bg-muted' : 'bg-blue-500/10',
         )}
       >
-        <HardDrive
+        <DriveIcon
           className={cn(
             'h-6 w-6',
             isDisabled ? 'text-muted-foreground' : 'text-blue-500',
@@ -41,7 +42,9 @@ export const DriveCard = ({ drive }: DriveCardProps) => {
         </p>
 
         <div className="flex items-center gap-4 mt-3">
-          <span className="text-sm text-muted-foreground">{drive.size}</span>
+          {drive.size && (
+            <span className="text-sm text-muted-foreground">{drive.size}</span>
+          )}
 
           <div className="flex items-center gap-1">
             {drive.hasCatalog ? (

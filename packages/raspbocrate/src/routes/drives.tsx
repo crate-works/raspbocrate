@@ -2,14 +2,14 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { useServerFn } from '@tanstack/react-start';
 import { DrivesList } from '@/components/DrivesList';
-import { getServerUsbDrives } from '@/server/usb';
+import { getServerDrives } from '@/server/drives';
 
 const useDrives = () => {
-  const getUsbDrives = useServerFn(getServerUsbDrives);
+  const getDrives = useServerFn(getServerDrives);
 
   return useSuspenseQuery({
-    queryKey: ['usb-drives'],
-    queryFn: () => getUsbDrives(),
+    queryKey: ['drives'],
+    queryFn: () => getDrives(),
   });
 };
 
@@ -20,9 +20,9 @@ const DrivesPage = () => {
   return (
     <div className="flex flex-1 flex-col gap-6 p-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">USB Drives</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Drives</h1>
         <p className="text-muted-foreground mt-2">
-          Select a USB drive with a catalogue to import data.
+          Select a drive with a catalogue to import data.
         </p>
       </div>
       <DrivesList drives={drives} />

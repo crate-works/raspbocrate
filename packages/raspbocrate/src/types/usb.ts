@@ -1,9 +1,10 @@
-export type UsbDrive = {
+export type Drive = {
   name: string;
   mountpoint: string | null;
-  size: string;
+  size: string | null;
   label: string | null;
   hasCatalog: boolean;
+  source: 'usb' | 'media';
 };
 
 export type LsblkDevice = {
