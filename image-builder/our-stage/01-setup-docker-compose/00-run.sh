@@ -22,8 +22,8 @@ IMAGES=(
   "mysql:8"
   "opensearchproject/opensearch:3"
   "ghcr.io/language-research-technology/oni-ui:new-api"
-  "ghcr.io/paradisec-archive/raspbocapi:main"
-  "ghcr.io/paradisec-archive/raspbocrate:main"
+  "ghcr.io/paradisec-archive/raspbocapi:latest"
+  "ghcr.io/paradisec-archive/raspbocrate:latest"
 )
 
 install -d "${ROOTFS_DIR}/var/lib/docker-images"
