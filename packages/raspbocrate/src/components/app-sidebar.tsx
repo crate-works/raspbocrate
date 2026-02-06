@@ -1,11 +1,5 @@
 import { Link, useRouterState } from '@tanstack/react-router';
-import {
-  Box,
-  Container,
-  HardDrive,
-  LayoutDashboard,
-  Server,
-} from 'lucide-react';
+import { Box, Container, HardDrive, LayoutDashboard } from 'lucide-react';
 
 import {
   Sidebar,
@@ -31,13 +25,8 @@ const navImport = [
 const navServices = [
   {
     title: 'oni-ui',
-    url: 'http://localhost:5000',
+    url: 'http://raspbocrate.local',
     icon: LayoutDashboard,
-  },
-  {
-    title: 'arocapi',
-    url: '/services/arocapi',
-    icon: Server,
   },
 ];
 
