@@ -9,6 +9,7 @@
     "ignoreUnknown": false,
     "includes": [
       "**",
+      "!.claude",
       "!packages/raspbocrate/src/components/ui",
       "!packages/raspbocrate/src/routeTree.gen.ts"
     ]
