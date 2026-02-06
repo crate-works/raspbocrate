@@ -26,6 +26,8 @@ const adapter = new PrismaMariaDb({
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME,
   connectionLimit: 5,
+  // NOTE: This is required when using the default MariaDB server configuration with SSL disabled. In production, you should properly configure SSL and remove this option.
+  allowPublicKeyRetrieval: true,
 });
 const prisma = new PrismaClient({ adapter });
 
