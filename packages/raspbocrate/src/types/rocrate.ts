@@ -4,7 +4,7 @@ export type MediaFile = {
   name: string;
   path: string;
   encodingFormat?: string;
-  contentSize?: string;
+  contentSize?: number;
 };
 
 export type CrateEntity = {

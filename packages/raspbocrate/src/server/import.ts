@@ -9,22 +9,20 @@ import type {
   RoCrateInfo,
 } from '@/types/rocrate';
 
-const parseContentSize = (contentSize: string | undefined): bigint => {
-  if (!contentSize) {
-    return BigInt(0);
-  }
-
-  // contentSize might be a number string like "12345" or with units like "1.5 MB"
-  const numericMatch = contentSize.match(/^(\d+)/);
-  if (numericMatch) {
-    return BigInt(numericMatch[1]);
-  }
-
-  return BigInt(0);
-};
-
 const findType = (type: string | string[]): string => {
   const types = Array.isArray(type) ? type : [type];
+
+  if (types.includes('Object')) {
+    return 'http://pcdm.org/models#Object';
+  }
+
+  if (types.includes('Collection')) {
+    return 'http://pcdm.org/models#Collection';
+  }
+
+  if (types.includes('File')) {
+    return 'http://schema.org/MediaObject';
+  }
 
   return types.find((t) => t.includes('pcdm')) || types[0];
 };
@@ -64,7 +62,6 @@ const processEntity = async (
       meta: {
         cratePath: cratePath,
       },
-      rocrate: {},
     };
 
     if (existing) {
@@ -105,13 +102,14 @@ const processFile = async (
   try {
     // Check file size from filesystem if contentSize not provided
     // Use atId for the file path since it's the actual path in the crate
-    let size = parseContentSize(file.contentSize);
+    let size = file.contentSize;
 
-    if (size === BigInt(0)) {
+    if (!size) {
       try {
         const fileStat = await stat(file.path);
-        size = BigInt(fileStat.size);
+        size = fileStat.size;
       } catch {
+        size = 0;
         // File might not exist or be inaccessible, use 0
       }
     }

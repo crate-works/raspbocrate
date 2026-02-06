@@ -64,18 +64,22 @@ const getEntityName = (entity: {
   return name || entity['@id'];
 };
 
-const getEntityIdentifier = (entity: {
-  identifier?: string | string[];
-  '@id': string;
-}): string => {
-  const identifier = entity.identifier;
-  if (Array.isArray(identifier)) {
-    return identifier[0] || entity['@id'];
-  }
-
-  return identifier || entity['@id'];
-};
-
+// const getEntityIdentifier = (entity: {
+//   identifier?: string | string[];
+//   '@id': string;
+// }): string => {
+//   const identifier = entity.identifier;
+//   console.log('🪚 ⛎');
+//   console.log('🪚 identifier:', identifier);
+//   if (Array.isArray(identifier)) {
+//     console.log('🪚 ♑', identifier[0]);
+//     return identifier[0] || entity['@id'];
+//   }
+//
+//   console.log('🪚 ♊');
+//   return identifier || entity['@id'];
+// };
+//
 const isMediaType = (type: string | string[]): boolean => {
   const mediaTypes = [
     'MediaObject',
@@ -136,9 +140,7 @@ const parseRoCrate = async (
 
     if (visited.has(atId)) {
       return {
-        id: getEntityIdentifier(
-          entity as { identifier?: string | string[]; '@id': string },
-        ),
+        id: atId,
         atId,
         type: getEntityType(entity as { '@type'?: string | string[] }),
         name: getEntityName(
@@ -167,9 +169,7 @@ const parseRoCrate = async (
           // It's a media file
           const partAtId = part['@id'] as string;
           mediaFiles.push({
-            id: getEntityIdentifier(
-              part as { identifier?: string | string[]; '@id': string },
-            ),
+            id: partAtId,
             atId: partAtId,
             name: getEntityName(
               part as { name?: string | string[]; '@id': string },
@@ -188,9 +188,7 @@ const parseRoCrate = async (
     }
 
     return {
-      id: getEntityIdentifier(
-        entity as { identifier?: string | string[]; '@id': string },
-      ),
+      id: atId,
       atId,
       type: getEntityType(entity as { '@type'?: string | string[] }),
       name: getEntityName(
