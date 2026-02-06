@@ -18,13 +18,7 @@ on_chroot <<EOF
 EOF
 
 # Pre-pull Docker images using skopeo
-IMAGES=(
-  "mysql:8"
-  "opensearchproject/opensearch:3"
-  "ghcr.io/language-research-technology/oni-ui:new-api"
-  "ghcr.io/paradisec-archive/raspbocapi:latest"
-  "ghcr.io/paradisec-archive/raspbocrate:latest"
-)
+mapfile -t IMAGES < <(grep '^\s*image:' files/docker-compose.yml | sed 's/.*image:\s*//')
 
 install -d "${ROOTFS_DIR}/var/lib/docker-images"
 
