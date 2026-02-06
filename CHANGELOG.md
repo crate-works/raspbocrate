@@ -1,3 +1,11 @@
+## [1.1.1](https://github.com/paradisec-archive/raspbocrate/compare/v1.1.0...v1.1.1) (2026-02-06)
+
+
+### Bug Fixes
+
+* make stage exectuable ([bb54835](https://github.com/paradisec-archive/raspbocrate/commit/bb54835ce94a5569258e69ace8090fe51645d3de))
+* pull the latest docker iages ([804ebbb](https://github.com/paradisec-archive/raspbocrate/commit/804ebbb5d7fd052d4c8fbb8b1da2b543636d11a7))
+
 # [1.1.0](https://github.com/paradisec-archive/raspbocrate/compare/v1.0.0...v1.1.0) (2026-02-06)
 
 
