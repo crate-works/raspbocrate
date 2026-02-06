@@ -14,7 +14,6 @@ const useDrives = () => {
 };
 
 const DrivesPage = () => {
-  console.log('🪚 ⭐');
   const { data: drives } = useDrives();
 
   return (
