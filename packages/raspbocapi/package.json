@@ -17,11 +17,13 @@
   "devDependencies": {
     "@types/node": "^22.19.9",
     "fastify-cli": "^7.4.1",
-    "prisma": "^7.3.0"
+    "prisma": "^7.3.0",
+    "typescript": "^5.9.3"
   },
   "scripts": {
     "start": "node --env-file=.env app.ts",
     "dev": "node --env-file=.env --watch app.ts",
+    "lint:types": "tsc --noEmit",
     "prisma": "pnpm dlx dotenv-cli -f .env -- prisma"
   },
   "keywords": [],
