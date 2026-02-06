@@ -1,3 +1,13 @@
+## [1.1.2](https://github.com/paradisec-archive/raspbocrate/compare/v1.1.1...v1.1.2) (2026-02-06)
+
+
+### Bug Fixes
+
+* container config and ports ([dc91a1e](https://github.com/paradisec-archive/raspbocrate/commit/dc91a1ed403858ae8b649a66de2ca5c212d44f21))
+* migrate the database ([5ae8a39](https://github.com/paradisec-archive/raspbocrate/commit/5ae8a39c7b0137f264d12a311ba342a0ac43eff6))
+* temp drop mysql to 5 to remove locking issue ([8b16082](https://github.com/paradisec-archive/raspbocrate/commit/8b1608296ae3a7f8b36043f4c471b70e9a79fa4c))
+* wrong Bind name in systemd service ([675a0b1](https://github.com/paradisec-archive/raspbocrate/commit/675a0b1b8f0d40e52c0902774b9de8f007e3e289))
+
 ## [1.1.1](https://github.com/paradisec-archive/raspbocrate/compare/v1.1.0...v1.1.1) (2026-02-06)
 
 
