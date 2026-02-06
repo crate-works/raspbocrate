@@ -1,3 +1,12 @@
+## [1.1.3](https://github.com/paradisec-archive/raspbocrate/compare/v1.1.2...v1.1.3) (2026-02-06)
+
+
+### Bug Fixes
+
+* make mysql connections not hang ([eb02ca2](https://github.com/paradisec-archive/raspbocrate/commit/eb02ca2bf249ad35b221335ea19b6e8a400ff282))
+* preload the exact images in the docker compose ([3e4a97e](https://github.com/paradisec-archive/raspbocrate/commit/3e4a97ec3f94ccb70a01c28d16e8a8a2cee86570))
+* you need power before wifi! ([ebaf489](https://github.com/paradisec-archive/raspbocrate/commit/ebaf489fb4a078a560be70e8613c61c5a6e04303))
+
 ## [1.1.2](https://github.com/paradisec-archive/raspbocrate/compare/v1.1.1...v1.1.2) (2026-02-06)
 
 
