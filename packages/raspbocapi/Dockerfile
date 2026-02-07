@@ -64,7 +64,10 @@ RUN addgroup --system --gid 1001 app && \
 USER app
 
 WORKDIR /app
+RUN mkdir -p /app/packages/raspbocapi
+COPY --from=deps /app/node_modules ./node_modules
 
+WORKDIR /app/packages/raspbocapi
 COPY --from=builder /app/packages/raspbocapi ./
 COPY --from=deps /app/packages/raspbocapi ./
 
