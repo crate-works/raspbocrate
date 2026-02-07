@@ -1,3 +1,13 @@
+## [1.1.5](https://github.com/paradisec-archive/raspbocrate/compare/v1.1.4...v1.1.5) (2026-02-07)
+
+
+### Bug Fixes
+
+* add restart policy and opensearch dependency to raspbocapi ([3f307e2](https://github.com/paradisec-archive/raspbocrate/commit/3f307e20c9ee59e623682b348987872634b23b83))
+* container dd and port settings ([fd459b6](https://github.com/paradisec-archive/raspbocrate/commit/fd459b6ec6428f9ef8f24f4acb01650462d99efe))
+* raspocapi listneing on 0/0 ([52d867b](https://github.com/paradisec-archive/raspbocrate/commit/52d867b5591e0125fe892e81bc6e2d91b054ffc9))
+* stop hostapd restarts ([2caf14e](https://github.com/paradisec-archive/raspbocrate/commit/2caf14ea8a960e1c16545748d4cb14825d707aa7))
+
 ## [1.1.4](https://github.com/paradisec-archive/raspbocrate/compare/v1.1.3...v1.1.4) (2026-02-07)
 
 
