@@ -1,3 +1,10 @@
+## [1.1.4](https://github.com/paradisec-archive/raspbocrate/compare/v1.1.3...v1.1.4) (2026-02-07)
+
+
+### Bug Fixes
+
+* update raspbocapi package ([63b44fd](https://github.com/paradisec-archive/raspbocrate/commit/63b44fdb3fda0964d567c4c8f0dc01829478c334))
+
 ## [1.1.3](https://github.com/paradisec-archive/raspbocrate/compare/v1.1.2...v1.1.3) (2026-02-06)
 
 
