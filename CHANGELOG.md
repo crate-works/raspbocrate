@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/paradisec-archive/raspbocrate/compare/v1.1.6...v1.2.0) (2026-02-09)
+
+
+### Features
+
+* flash Pi 5 power LED when all containers are healthy ([0f777b3](https://github.com/paradisec-archive/raspbocrate/commit/0f777b399863f2ad69bef2064ec16bc50bd3ffd8))
+
 ## [1.1.6](https://github.com/paradisec-archive/raspbocrate/compare/v1.1.5...v1.1.6) (2026-02-09)
 
 
