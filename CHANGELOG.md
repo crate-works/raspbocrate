@@ -1,3 +1,10 @@
+## [1.1.6](https://github.com/paradisec-archive/raspbocrate/compare/v1.1.5...v1.1.6) (2026-02-09)
+
+
+### Bug Fixes
+
+* correct the object types ([30577f2](https://github.com/paradisec-archive/raspbocrate/commit/30577f2c74cbd9bc399de593b72f0b6c58f785cc))
+
 ## [1.1.5](https://github.com/paradisec-archive/raspbocrate/compare/v1.1.4...v1.1.5) (2026-02-07)
 
 
