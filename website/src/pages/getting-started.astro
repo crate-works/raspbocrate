@@ -75,6 +75,7 @@ import Layout from '../layouts/Layout.astro';
           <li>Connect the power supply</li>
           <li>Connect to the <code>raspbocrate-XXX</code> Wi-Fi access point (no credentials required), or connect the Pi to your local network via Ethernet (DHCP must be available)</li>
           <li>Wait for the Pi to boot (first boot may take 5–10 minutes depending on your Pi as containers initialise)</li>
+          <li>On a Raspberry Pi 5, the power LED will flash when all services are ready. The LED flashes for 2 minutes at a 1-second interval to signal that the system is available</li>
         </ol>
 
         <h2>Step 4: Access the admin interface</h2>
@@ -115,6 +116,7 @@ import Layout from '../layouts/Layout.astro';
 
         <h3>Services not starting</h3>
         <ul>
+          <li>On a Pi 5, if the power LED doesn't flash after 10 minutes, the containers may have failed to start</li>
           <li>Wait a few minutes after first boot for all containers to start</li>
           <li>SSH into the Pi and check Docker container status: <code>docker ps</code></li>
           <li>Check container logs: <code>docker compose logs</code></li>
