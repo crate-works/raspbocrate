@@ -1,0 +1,11 @@
+[Unit]
+Description=Flash power LED when all RaspboCrate containers are healthy
+After=raspbocrate.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/raspbocrate/raspbocrate-ready-led.sh
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target
