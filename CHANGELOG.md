@@ -1,3 +1,15 @@
+# [1.3.0](https://github.com/paradisec-archive/raspbocrate/compare/v1.2.0...v1.3.0) (2026-02-09)
+
+
+### Bug Fixes
+
+* make search work ([b5a2401](https://github.com/paradisec-archive/raspbocrate/commit/b5a24016860cb273547717a6b85d1c0e66e1e48e))
+
+
+### Features
+
+* add reset data button and data stats to home page ([47d7ebc](https://github.com/paradisec-archive/raspbocrate/commit/47d7ebc549842facfa928321c492affef8ff2fd9))
+
 # [1.2.0](https://github.com/paradisec-archive/raspbocrate/compare/v1.1.6...v1.2.0) (2026-02-09)
 
 
