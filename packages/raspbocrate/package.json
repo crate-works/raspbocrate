@@ -41,6 +41,7 @@
     "lucide-react": "^0.563.0",
     "nitro": "latest",
     "prisma": "^7.3.0",
+    "radix-ui": "^1.4.3",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "ro-crate": "^3.6.1",

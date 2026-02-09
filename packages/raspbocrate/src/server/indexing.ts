@@ -1,6 +1,6 @@
 import { opensearch } from '@/opensearch';
 
-const INDEX_NAME = 'entities';
+export const INDEX_NAME = 'entities';
 
 export type EntityDocument = {
   rocrateId: string;
@@ -63,6 +63,16 @@ export const indexEntityDocument = async (
     id: doc.rocrateId,
     body: doc,
   });
+};
+
+export const deleteIndex = async (): Promise<void> => {
+  const { body: exists } = await opensearch.indices.exists({
+    index: INDEX_NAME,
+  });
+
+  if (exists) {
+    await opensearch.indices.delete({ index: INDEX_NAME });
+  }
 };
 
 export const refreshIndex = async (): Promise<void> => {
