@@ -234,7 +234,7 @@
       },
       {
         "display": "Language",
-        "name": "languages",
+        "name": "inLanguage",
         "help": "The language(s) of the content in this resource."
       },
       {
@@ -244,19 +244,19 @@
       },
       {
         "display": "File Format",
-        "name": "encodingFormat",
+        "name": "mediaType",
         "help": "The media type of the resource."
       },
       {
         "display": "Entity Type",
-        "name": "entity_type",
+        "name": "entityType",
         "help": "The entity type of the resource."
       }
     ],
     "searchFields": {
       "name": "Name",
       "description": "Description",
-      "languages": "Language",
+      "inLanguage": "Language",
       "countries": "Country",
       "text": "Text"
     },

@@ -13,30 +13,33 @@ export type EntityDocument = {
   countries: string[];
   originatedOn: string | null;
   access_condition_name: string | null;
-  languages: string[];
+  inLanguage: string[];
   communicationMode: string[];
   type: string[];
-  encodingFormat: string[];
-  entity_type: string;
+  mediaType: string[];
+};
+
+const TEXT_WITH_KEYWORD = {
+  type: 'text' as const,
+  fields: { keyword: { type: 'keyword' as const } },
 };
 
 const INDEX_MAPPINGS = {
   properties: {
-    rocrateId: { type: 'keyword' as const },
-    name: { type: 'text' as const },
+    rocrateId: TEXT_WITH_KEYWORD,
+    name: TEXT_WITH_KEYWORD,
     description: { type: 'text' as const },
-    entityType: { type: 'keyword' as const },
-    memberOf: { type: 'keyword' as const },
-    rootCollection: { type: 'keyword' as const },
-    collector_name: { type: 'keyword' as const },
-    countries: { type: 'keyword' as const },
+    entityType: TEXT_WITH_KEYWORD,
+    memberOf: TEXT_WITH_KEYWORD,
+    rootCollection: TEXT_WITH_KEYWORD,
+    collector_name: TEXT_WITH_KEYWORD,
+    countries: TEXT_WITH_KEYWORD,
     originatedOn: { type: 'date' as const, ignore_malformed: true },
-    access_condition_name: { type: 'keyword' as const },
-    languages: { type: 'keyword' as const },
-    communicationMode: { type: 'keyword' as const },
-    type: { type: 'keyword' as const },
-    encodingFormat: { type: 'keyword' as const },
-    entity_type: { type: 'keyword' as const },
+    access_condition_name: TEXT_WITH_KEYWORD,
+    inLanguage: TEXT_WITH_KEYWORD,
+    communicationMode: TEXT_WITH_KEYWORD,
+    type: TEXT_WITH_KEYWORD,
+    mediaType: TEXT_WITH_KEYWORD,
   },
 };
 

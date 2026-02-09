@@ -110,11 +110,10 @@ const processEntity = async (
         countries: indexData?.countries ?? [],
         originatedOn: indexData?.originatedOn ?? null,
         access_condition_name: indexData?.accessConditionName ?? null,
-        languages: indexData?.languages ?? [],
+        inLanguage: indexData?.languages ?? [],
         communicationMode: indexData?.communicationMode ?? [],
         type: indexData?.type ?? [],
-        encodingFormat: encodingFormats,
-        entity_type: entityData.entityType,
+        mediaType: encodingFormats,
       };
 
       await indexEntityDocument(doc);
@@ -263,11 +262,10 @@ const processFile = async (
         countries: [],
         originatedOn: null,
         access_condition_name: null,
-        languages: [],
+        inLanguage: [],
         communicationMode: [],
         type: ['File'],
-        encodingFormat: mediaType ? [mediaType] : [],
-        entity_type: 'http://schema.org/MediaObject',
+        mediaType: mediaType ? [mediaType] : [],
       };
 
       await indexEntityDocument(doc);
