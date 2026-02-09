@@ -8,15 +8,21 @@ import type {
   MediaFile,
   RoCrateInfo,
 } from '@/types/rocrate';
+import {
+  type EntityDocument,
+  ensureIndex,
+  indexEntityDocument,
+  refreshIndex,
+} from './indexing';
 
 const findType = (type: string | string[]): string => {
   const types = Array.isArray(type) ? type : [type];
 
-  if (types.includes('Object')) {
+  if (types.includes('RepositoryObject')) {
     return 'http://pcdm.org/models#Object';
   }
 
-  if (types.includes('Collection')) {
+  if (types.includes('RepositoryCollection')) {
     return 'http://pcdm.org/models#Collection';
   }
 
@@ -80,6 +86,42 @@ const processEntity = async (
     // Process media files
     for (const file of entity.mediaFiles) {
       await processFile(file, rootCollectionId, entityId, stats);
+    }
+
+    // Index entity into OpenSearch
+    try {
+      const encodingFormats = [
+        ...new Set(
+          entity.mediaFiles
+            .map((f) => f.encodingFormat)
+            .filter((f): f is string => !!f),
+        ),
+      ];
+
+      const indexData = entity.indexData;
+      const doc: EntityDocument = {
+        rocrateId: entityId,
+        name: entity.name,
+        description: entity.description || '',
+        entityType: entityData.entityType,
+        memberOf: parentId,
+        rootCollection: rootCollectionId,
+        collector_name: indexData?.collectorName ?? [],
+        countries: indexData?.countries ?? [],
+        originatedOn: indexData?.originatedOn ?? null,
+        access_condition_name: indexData?.accessConditionName ?? null,
+        languages: indexData?.languages ?? [],
+        communicationMode: indexData?.communicationMode ?? [],
+        type: indexData?.type ?? [],
+        encodingFormat: encodingFormats,
+        entity_type: entityData.entityType,
+      };
+
+      await indexEntityDocument(doc);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Unknown error occurred';
+      stats.errors.push(`Index entity ${entityId}: ${message}`);
     }
 
     // Process child entities
@@ -207,6 +249,33 @@ const processFile = async (
       });
       stats.entitiesCreated++;
     }
+
+    // Index file entity into OpenSearch
+    try {
+      const doc: EntityDocument = {
+        rocrateId: file.id,
+        name: file.name,
+        description: '',
+        entityType: 'http://schema.org/MediaObject',
+        memberOf: parentEntityId,
+        rootCollection: rootCollectionId,
+        collector_name: [],
+        countries: [],
+        originatedOn: null,
+        access_condition_name: null,
+        languages: [],
+        communicationMode: [],
+        type: ['File'],
+        encodingFormat: mediaType ? [mediaType] : [],
+        entity_type: 'http://schema.org/MediaObject',
+      };
+
+      await indexEntityDocument(doc);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Unknown error occurred';
+      stats.errors.push(`Index file ${file.id}: ${message}`);
+    }
   } catch (error) {
     const message =
       error instanceof Error ? error.message : 'Unknown error occurred';
@@ -232,21 +301,50 @@ const processCrate = async (
   );
 };
 
-export const processCrateTree = async (
+const processCrateTreeInner = async (
   nodes: CrateTreeNode[],
   basePath: string,
   parentId: string | null,
   stats: ImportStats,
 ): Promise<void> => {
   for (const node of nodes) {
-    console.log('🪚 ♎', node);
     await processCrate(node.crate, basePath, parentId, stats);
 
     const childrenParentId = node.crate.rootEntity.id;
 
     // Process nested crates
     if (node.children.length > 0) {
-      await processCrateTree(node.children, basePath, childrenParentId, stats);
+      await processCrateTreeInner(
+        node.children,
+        basePath,
+        childrenParentId,
+        stats,
+      );
     }
+  }
+};
+
+export const processCrateTree = async (
+  nodes: CrateTreeNode[],
+  basePath: string,
+  parentId: string | null,
+  stats: ImportStats,
+): Promise<void> => {
+  try {
+    await ensureIndex();
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : 'Unknown error occurred';
+    stats.errors.push(`OpenSearch index setup: ${message}`);
+  }
+
+  await processCrateTreeInner(nodes, basePath, parentId, stats);
+
+  try {
+    await refreshIndex();
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : 'Unknown error occurred';
+    stats.errors.push(`OpenSearch index refresh: ${message}`);
   }
 };

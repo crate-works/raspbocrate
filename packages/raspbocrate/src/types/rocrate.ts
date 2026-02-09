@@ -7,6 +7,16 @@ export type MediaFile = {
   contentSize?: number;
 };
 
+export type IndexData = {
+  collectorName: string[];
+  countries: string[];
+  originatedOn: string | null;
+  accessConditionName: string | null;
+  languages: string[];
+  communicationMode: string[];
+  type: string[];
+};
+
 export type CrateEntity = {
   id: string;
   atId: string;
@@ -16,6 +26,7 @@ export type CrateEntity = {
   license?: string;
   mediaFiles: MediaFile[];
   children: CrateEntity[];
+  indexData?: IndexData;
 };
 
 export type RoCrateInfo = {

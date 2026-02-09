@@ -57,6 +57,9 @@ importers:
 
   packages/raspbocrate:
     dependencies:
+      '@opensearch-project/opensearch':
+        specifier: ^3.5.1
+        version: 3.5.1
       '@prisma/adapter-mariadb':
         specifier: ^7.3.0
         version: 7.3.0

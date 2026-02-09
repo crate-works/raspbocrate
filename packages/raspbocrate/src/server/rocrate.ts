@@ -6,6 +6,7 @@ import { z } from 'zod';
 import type {
   CrateEntity,
   CrateTreeNode,
+  IndexData,
   MediaFile,
   RoCrateInfo,
 } from '@/types/rocrate';
@@ -119,6 +120,75 @@ const isDataEntity = (entity: {
   return types.some((t) => dataTypes.includes(t));
 };
 
+const extractNames = (value: unknown): string[] => {
+  if (!value) return [];
+
+  const items = Array.isArray(value) ? value : [value];
+
+  return items
+    .map((item) => {
+      if (typeof item === 'string') return item;
+      if (item && typeof item === 'object' && 'name' in item) {
+        return typeof item.name === 'string' ? item.name : null;
+      }
+
+      return null;
+    })
+    .filter((name): name is string => name !== null);
+};
+
+const toStringArray = (value: unknown): string[] => {
+  if (!value) return [];
+  if (typeof value === 'string') return [value];
+  if (Array.isArray(value)) {
+    return value.filter((v): v is string => typeof v === 'string');
+  }
+
+  return [];
+};
+
+const extractIndexData = (entity: Record<string, unknown>): IndexData => {
+  const collectorName = extractNames(entity.collector);
+  const countries = toStringArray(entity.countries);
+  const originatedOn =
+    typeof entity.originatedOn === 'string' ? entity.originatedOn : null;
+
+  const license = entity.license;
+  let accessConditionName: string | null = null;
+  if (license && typeof license === 'object' && 'name' in license) {
+    accessConditionName =
+      typeof license.name === 'string' ? license.name : null;
+  } else if (typeof license === 'string') {
+    accessConditionName = license;
+  }
+
+  const languages = [
+    ...extractNames(entity.subjectLanguage),
+    ...extractNames(entity.inLanguage),
+  ];
+  // Deduplicate
+  const uniqueLanguages = [...new Set(languages)];
+
+  const communicationMode = toStringArray(entity.communicationMode);
+
+  const rawType = entity['@type'];
+  const type = Array.isArray(rawType)
+    ? rawType.filter((t): t is string => typeof t === 'string')
+    : typeof rawType === 'string'
+      ? [rawType]
+      : [];
+
+  return {
+    collectorName,
+    countries,
+    originatedOn,
+    accessConditionName,
+    languages: uniqueLanguages,
+    communicationMode,
+    type,
+  };
+};
+
 const parseRoCrate = async (
   filePath: string,
   basePath: string,
@@ -176,7 +246,8 @@ const parseRoCrate = async (
             ),
             path: path.join(cratePath, part.filename as string),
             encodingFormat: part.encodingFormat as string | undefined,
-            contentSize: part.contentSize as string | undefined,
+            contentSize:
+              part.contentSize != null ? Number(part.contentSize) : undefined,
           });
         } else if (
           isDataEntity(part as { '@type'?: string | string[]; '@id': string })
@@ -197,6 +268,7 @@ const parseRoCrate = async (
       description: entity.description as string | undefined,
       mediaFiles,
       children,
+      indexData: extractIndexData(entity),
     };
   };
 
