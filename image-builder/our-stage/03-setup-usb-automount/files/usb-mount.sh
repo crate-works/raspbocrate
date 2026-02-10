@@ -36,20 +36,7 @@ do_mount() {
 
   mkdir -p "${MOUNT_POINT}"
 
-  # Detect filesystem type for mount options
-  FS_TYPE=$(lsblk -n -o FSTYPE "${DEVICE_PATH}" | head -1 | xargs)
-
-  MOUNT_OPTS="defaults"
-  case "${FS_TYPE}" in
-  vfat | exfat)
-    MOUNT_OPTS="defaults,uid=1000,gid=1000,umask=022"
-    ;;
-  ntfs | ntfs3)
-    MOUNT_OPTS="defaults,uid=1000,gid=1000"
-    ;;
-  esac
-
-  mount -o "${MOUNT_OPTS}" "${DEVICE_PATH}" "${MOUNT_POINT}"
+  mount -o "defaults,uid=1000,gid=1000" "${DEVICE_PATH}" "${MOUNT_POINT}"
 
   # Record mount point for cleanup
   echo "${MOUNT_POINT}" >"${STATE_FILE}"
