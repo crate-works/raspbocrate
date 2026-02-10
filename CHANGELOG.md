@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/paradisec-archive/raspbocrate/compare/v1.3.0...v1.3.1) (2026-02-10)
+
+
+### Bug Fixes
+
+* simplify the mount options ([fd22c77](https://github.com/paradisec-archive/raspbocrate/commit/fd22c77fbdb16bddc93ede46286385fcc574a008))
+
 # [1.3.0](https://github.com/paradisec-archive/raspbocrate/compare/v1.2.0...v1.3.0) (2026-02-09)
 
 
