@@ -65,7 +65,7 @@ services:
       DATABASE_USER: root
       DATABASE_PASSWORD: password
       DATABASE_NAME: raspbocapi
-      NITRO_APP_BASE_URL: /admin/
+      OPENSEARCH_URL: http://opensearch:9200
     volumes:
       - /media:/media:rslave
 
