@@ -79,6 +79,19 @@ services:
       - /opt/raspbocrate/oni-ui.json:/configuration.json
       - /opt/raspbocrate/logo.png:/usr/share/nginx/html/logo.png
 
+  dozzle:
+    image: amir20/dozzle:latest
+    restart: unless-stopped
+    volumes:
+      - /run/docker.sock:/var/run/docker.sock
+    ports:
+      - 8080:8080
+    environment:
+      - DOZZLE_ENABLE_ACTIONS=true
+      - DOZZLE_ENABLE_SHELL=true
+      # Uncomment to enable authentication. See https://dozzle.dev/guide/authentication
+      # - DOZZLE_AUTH_PROVIDER=simple
+
 volumes:
   mysql_data:
   opensearch_data:
