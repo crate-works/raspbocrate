@@ -1,6 +1,6 @@
 import { Link, useRouterState } from '@tanstack/react-router';
+import type { LucideIcon } from 'lucide-react';
 import { Box, Container, HardDrive, LayoutDashboard } from 'lucide-react';
-
 import {
   Sidebar,
   SidebarContent,
@@ -14,7 +14,14 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar';
 
-const navImport = [
+interface NavItem {
+  title: string;
+  url: string;
+  icon: LucideIcon;
+  external?: boolean;
+}
+
+const navImport: NavItem[] = [
   {
     title: 'Drives',
     url: '/drives',
@@ -22,21 +29,41 @@ const navImport = [
   },
 ];
 
-const navServices = [
+const navServices: NavItem[] = [
   {
     title: 'oni-ui',
-    url: 'http://raspbocrate.local',
+    url: '/',
     icon: LayoutDashboard,
+    external: true,
   },
 ];
 
-const navContainers = [
+const navContainers: NavItem[] = [
   {
     title: 'All Containers',
-    url: '/containers',
+    url: '/admin/containers/',
     icon: Container,
+    external: true,
   },
 ];
+
+const NavLink = ({ item }: { item: NavItem }) => {
+  if (item.external) {
+    return (
+      <a href={item.url}>
+        <item.icon />
+        <span>{item.title}</span>
+      </a>
+    );
+  }
+
+  return (
+    <Link to={item.url}>
+      <item.icon />
+      <span>{item.title}</span>
+    </Link>
+  );
+};
 
 export const AppSidebar = ({
   ...props
@@ -75,10 +102,7 @@ export const AppSidebar = ({
                     isActive={currentPath === item.url}
                     tooltip={item.title}
                   >
-                    <Link to={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
+                    <NavLink item={item} />
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -97,10 +121,7 @@ export const AppSidebar = ({
                     isActive={currentPath === item.url}
                     tooltip={item.title}
                   >
-                    <Link to={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
+                    <NavLink item={item} />
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -119,10 +140,7 @@ export const AppSidebar = ({
                     isActive={currentPath === item.url}
                     tooltip={item.title}
                   >
-                    <Link to={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
+                    <NavLink item={item} />
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

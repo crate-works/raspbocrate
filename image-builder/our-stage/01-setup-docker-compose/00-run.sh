@@ -8,6 +8,7 @@ EOF
 # Install files to the image
 install -d "${ROOTFS_DIR}/opt/raspbocrate"
 install -m 644 files/docker-compose.yml "${ROOTFS_DIR}/opt/raspbocrate/docker-compose.yml"
+install -m 644 files/nginx.conf "${ROOTFS_DIR}/opt/raspbocrate/nginx.conf"
 install -m 644 files/oni-ui.json "${ROOTFS_DIR}/opt/raspbocrate/oni-ui.json"
 install -m 644 files/logo.png "${ROOTFS_DIR}/opt/raspbocrate/logo.png"
 install -m 644 files/raspbocrate.service "${ROOTFS_DIR}/etc/systemd/system/raspbocrate.service"

@@ -65,16 +65,13 @@ services:
       DATABASE_USER: root
       DATABASE_PASSWORD: password
       DATABASE_NAME: raspbocapi
-    ports:
-      - "4000:3000"
+      NITRO_APP_BASE_URL: /admin/
     volumes:
       - /media:/media:rslave
 
   oni-ui:
     image: ghcr.io/language-research-technology/oni-ui:new-api
     restart: unless-stopped
-    ports:
-      - "80:80"
     volumes:
       - /opt/raspbocrate/oni-ui.json:/configuration.json
       - /opt/raspbocrate/logo.png:/usr/share/nginx/html/logo.png
@@ -84,13 +81,24 @@ services:
     restart: unless-stopped
     volumes:
       - /run/docker.sock:/var/run/docker.sock
-    ports:
-      - 8080:8080
     environment:
       - DOZZLE_ENABLE_ACTIONS=true
       - DOZZLE_ENABLE_SHELL=true
+      - DOZZLE_BASE=/admin/containers
       # Uncomment to enable authentication. See https://dozzle.dev/guide/authentication
       # - DOZZLE_AUTH_PROVIDER=simple
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - /opt/raspbocrate/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - oni-ui
+      - raspbocrate
+      - dozzle
 
 volumes:
   mysql_data:

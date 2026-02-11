@@ -75,4 +75,9 @@ Both packages use Prisma with the MariaDB adapter. Environment variables are loa
 
 - **MySQL 8**: localhost:3306 (root/password, database: raspbocapi)
 - **OpenSearch 3**: localhost:9200
-- **ONI-UI**: localhost:5000 (discovery interface)
+- **ONI-UI**: localhost:80 (discovery interface)
+
+## Notes
+
+- The raspbocrate dev server serves at `localhost:3000/admin/` (Vite `base: '/admin/'`)
+- The Pi image-builder docker-compose uses an nginx reverse proxy: `/` → ONI-UI, `/admin` → raspbocrate, `/admin/containers` → Dozzle

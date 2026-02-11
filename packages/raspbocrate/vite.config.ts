@@ -8,6 +8,7 @@ import { defineConfig, type PluginOption } from 'vite';
 import viteTsConfigPaths from 'vite-tsconfig-paths';
 
 const config = defineConfig({
+  base: '/admin/',
   plugins: [
     devtools(),
     tanstackStart(),
