@@ -1,5 +1,4 @@
 import { Link, useRouterState } from '@tanstack/react-router';
-import type { LucideIcon } from 'lucide-react';
 import { Box, Container, HardDrive, LayoutDashboard } from 'lucide-react';
 import {
   Sidebar,
@@ -13,57 +12,6 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@/components/ui/sidebar';
-
-interface NavItem {
-  title: string;
-  url: string;
-  icon: LucideIcon;
-  external?: boolean;
-}
-
-const navImport: NavItem[] = [
-  {
-    title: 'Drives',
-    url: '/drives',
-    icon: HardDrive,
-  },
-];
-
-const navServices: NavItem[] = [
-  {
-    title: 'oni-ui',
-    url: '/',
-    icon: LayoutDashboard,
-    external: true,
-  },
-];
-
-const navContainers: NavItem[] = [
-  {
-    title: 'All Containers',
-    url: '/admin/containers/',
-    icon: Container,
-    external: true,
-  },
-];
-
-const NavLink = ({ item }: { item: NavItem }) => {
-  if (item.external) {
-    return (
-      <a href={item.url}>
-        <item.icon />
-        <span>{item.title}</span>
-      </a>
-    );
-  }
-
-  return (
-    <Link to={item.url}>
-      <item.icon />
-      <span>{item.title}</span>
-    </Link>
-  );
-};
 
 export const AppSidebar = ({
   ...props
@@ -95,17 +43,18 @@ export const AppSidebar = ({
           <SidebarGroupLabel>Import</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navImport.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={currentPath === item.url}
-                    tooltip={item.title}
-                  >
-                    <NavLink item={item} />
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={currentPath === '/drives'}
+                  tooltip="Drives"
+                >
+                  <Link to="/drives">
+                    <HardDrive />
+                    <span>Drives</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -114,17 +63,14 @@ export const AppSidebar = ({
           <SidebarGroupLabel>Services</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navServices.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={currentPath === item.url}
-                    tooltip={item.title}
-                  >
-                    <NavLink item={item} />
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="oni-ui">
+                  <a href="/">
+                    <LayoutDashboard />
+                    <span>oni-ui</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -133,17 +79,14 @@ export const AppSidebar = ({
           <SidebarGroupLabel>Containers</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navContainers.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={currentPath === item.url}
-                    tooltip={item.title}
-                  >
-                    <NavLink item={item} />
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="All Containers">
+                  <a href="/admin/containers/">
+                    <Container />
+                    <span>All Containers</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

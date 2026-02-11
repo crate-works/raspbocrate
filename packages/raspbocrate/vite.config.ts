@@ -12,7 +12,9 @@ const config = defineConfig({
   plugins: [
     devtools(),
     tanstackStart(),
-    nitro(),
+    nitro({
+      baseURL: '/admin/',
+    }),
     viteReact(),
 
     tailwindcss(),
