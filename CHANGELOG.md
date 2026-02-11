@@ -1,3 +1,10 @@
+## [1.4.2](https://github.com/paradisec-archive/raspbocrate/compare/v1.4.1...v1.4.2) (2026-02-11)
+
+
+### Bug Fixes
+
+* opensearch url ([7742375](https://github.com/paradisec-archive/raspbocrate/commit/77423756a7c3c50c058b2a190789f02f754988e6))
+
 ## [1.4.1](https://github.com/paradisec-archive/raspbocrate/compare/v1.4.0...v1.4.1) (2026-02-11)
 
 
