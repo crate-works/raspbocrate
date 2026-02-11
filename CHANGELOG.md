@@ -1,3 +1,12 @@
+## [1.4.1](https://github.com/paradisec-archive/raspbocrate/compare/v1.4.0...v1.4.1) (2026-02-11)
+
+
+### Bug Fixes
+
+* base URL ([9273596](https://github.com/paradisec-archive/raspbocrate/commit/9273596fa81f48960e7260d83b70cf9b03be68ae))
+* make build stage executable ([3f1a789](https://github.com/paradisec-archive/raspbocrate/commit/3f1a789280129736d9f3622a4144dfc704909abb))
+* test image needs to be bigger ([57d9000](https://github.com/paradisec-archive/raspbocrate/commit/57d90000bfc0f3a3a8bea4906b329fa13df92871))
+
 # [1.4.0](https://github.com/paradisec-archive/raspbocrate/compare/v1.3.1...v1.4.0) (2026-02-11)
 
 
