@@ -1,3 +1,16 @@
+# [1.4.0](https://github.com/paradisec-archive/raspbocrate/compare/v1.3.1...v1.4.0) (2026-02-11)
+
+
+### Bug Fixes
+
+* update raspbocapi health check ([8f82f05](https://github.com/paradisec-archive/raspbocrate/commit/8f82f0568d69ae6147bc496931a1d79ec74b2d74))
+
+
+### Features
+
+* add dozzle for container management ([aebc487](https://github.com/paradisec-archive/raspbocrate/commit/aebc48771071ecc7fa5d00f50069458bcd4082f4))
+* add nginx reverse proxy for path-based routing ([3e54433](https://github.com/paradisec-archive/raspbocrate/commit/3e544336e65d940a0ab1569f21d755a8eee042a6))
+
 ## [1.3.1](https://github.com/paradisec-archive/raspbocrate/compare/v1.3.0...v1.3.1) (2026-02-10)
 
 
