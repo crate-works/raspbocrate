@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/paradisec-archive/raspbocrate/compare/v1.5.0...v1.6.0) (2026-02-13)
+
+
+### Features
+
+* **opensearch:** add custom OpenSearch container image ([55d994a](https://github.com/paradisec-archive/raspbocrate/commit/55d994a13a8f7960d5cda91026d31c52de5fc588))
+
 # [1.5.0](https://github.com/paradisec-archive/raspbocrate/compare/v1.4.2...v1.5.0) (2026-02-12)
 
 
