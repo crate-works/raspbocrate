@@ -1,3 +1,11 @@
+## [1.6.1](https://github.com/paradisec-archive/raspbocrate/compare/v1.6.0...v1.6.1) (2026-02-13)
+
+
+### Bug Fixes
+
+* halve size of opensearch image ([297be29](https://github.com/paradisec-archive/raspbocrate/commit/297be29d74ff2c0b54208e59ad5a3c398108c312))
+* **raspbocrate:** add SidebarTrigger for mobile sidebar access ([c3ec6c4](https://github.com/paradisec-archive/raspbocrate/commit/c3ec6c4ad11e80b1dd67f20024a45291ce22636f))
+
 # [1.6.0](https://github.com/paradisec-archive/raspbocrate/compare/v1.5.0...v1.6.0) (2026-02-13)
 
 
