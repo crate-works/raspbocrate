@@ -1,3 +1,10 @@
+## [1.6.2](https://github.com/paradisec-archive/raspbocrate/compare/v1.6.1...v1.6.2) (2026-02-16)
+
+
+### Performance Improvements
+
+* **opensearch:** optimise container for basic usage ([04b6171](https://github.com/paradisec-archive/raspbocrate/commit/04b61713a372fbc104af6fccd1327728f03bf508))
+
 ## [1.6.1](https://github.com/paradisec-archive/raspbocrate/compare/v1.6.0...v1.6.1) (2026-02-13)
 
 
