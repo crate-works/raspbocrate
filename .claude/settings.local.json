@@ -3,7 +3,8 @@
     "allow": [
       "Bash(pnpm lint:biome:*)",
       "Bash(tree:*)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(pnpm lint:types:*)"
     ]
   }
 }

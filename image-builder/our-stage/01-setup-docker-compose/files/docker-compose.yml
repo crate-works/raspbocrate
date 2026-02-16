@@ -16,8 +16,6 @@ services:
   opensearch:
     image: ghcr.io/paradisec-archive/opensearch
     restart: unless-stopped
-    environment:
-      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=bjv7QYK*zxw9nyd5dpb
     volumes:
       - opensearch_data:/usr/share/opensearch/data
     healthcheck:
@@ -26,6 +24,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 120s
 
   raspbocapi:
     image: ghcr.io/paradisec-archive/raspbocapi

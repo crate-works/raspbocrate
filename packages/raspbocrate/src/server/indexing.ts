@@ -52,6 +52,10 @@ export const ensureIndex = async (): Promise<void> => {
     await opensearch.indices.create({
       index: INDEX_NAME,
       body: {
+        settings: {
+          number_of_shards: 1,
+          number_of_replicas: 0,
+        },
         mappings: INDEX_MAPPINGS,
       },
     });
