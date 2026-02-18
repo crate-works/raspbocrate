@@ -4,18 +4,22 @@ import { deleteIndex, INDEX_NAME } from './indexing';
 
 export type DataStats = {
   entityCounts: { entityType: string; count: number }[];
-  fileCount: number;
+  fileCounts: { mediaType: string; count: number }[];
   indexCount: number;
 };
 
 export const getDataStats = async (): Promise<DataStats> => {
-  const [entityGroups, fileCount, indexCount] = await Promise.all([
+  const [entityGroups, fileGroups, indexCount] = await Promise.all([
     prisma.entity.groupBy({
       by: ['entityType'],
       _count: { entityType: true },
       orderBy: { _count: { entityType: 'desc' } },
     }),
-    prisma.file.count(),
+    prisma.file.groupBy({
+      by: ['mediaType'],
+      _count: { mediaType: true },
+      orderBy: { _count: { mediaType: 'desc' } },
+    }),
     getIndexCount(),
   ]);
 
@@ -24,7 +28,10 @@ export const getDataStats = async (): Promise<DataStats> => {
       entityType: g.entityType,
       count: g._count.entityType,
     })),
-    fileCount,
+    fileCounts: fileGroups.map((g) => ({
+      mediaType: g.mediaType,
+      count: g._count.mediaType,
+    })),
     indexCount,
   };
 };

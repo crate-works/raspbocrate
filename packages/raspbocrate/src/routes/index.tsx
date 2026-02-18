@@ -100,6 +100,27 @@ const HomePage = () => {
         </p>
       </div>
 
+      <div className="space-y-4 text-sm text-muted-foreground">
+        <p>
+          RaspboCrate is an admin interface for managing Raspberry Pi devices
+          running RO-Crate catalogue services:
+        </p>
+        <ul className="list-disc list-inside space-y-2 ml-2">
+          <li>
+            <strong className="text-foreground">oni-ui</strong> - A web
+            interface for browsing and searching RO-Crate catalogues
+          </li>
+          <li>
+            <strong className="text-foreground">arocapi</strong> - The API
+            backend that serves catalogue data
+          </li>
+        </ul>
+        <p>
+          Use the sidebar to navigate between importing data from USB drives,
+          managing services, and monitoring containers.
+        </p>
+      </div>
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div className="rounded-lg border bg-card p-6">
           <div className="flex items-center gap-4">
@@ -180,9 +201,25 @@ const HomePage = () => {
                 <FileText className="h-4 w-4 text-muted-foreground" />
                 <h3 className="text-sm font-medium">Files</h3>
               </div>
-              <p className="text-2xl font-semibold tabular-nums">
-                {statsQuery.data.fileCount}
-              </p>
+              {statsQuery.data.fileCounts.length > 0 ? (
+                <div className="space-y-1.5">
+                  {statsQuery.data.fileCounts.map((group) => (
+                    <div
+                      key={group.mediaType}
+                      className="flex items-center justify-between text-sm"
+                    >
+                      <span className="text-muted-foreground">
+                        {group.mediaType}
+                      </span>
+                      <span className="font-medium tabular-nums">
+                        {group.count}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">None</p>
+              )}
             </div>
 
             <div className="rounded-lg border p-4">
@@ -247,30 +284,6 @@ const HomePage = () => {
             <p>{resetStatus.message}</p>
           </div>
         )}
-      </div>
-
-      <div className="rounded-lg border bg-card p-6">
-        <h2 className="text-lg font-semibold mb-4">About RaspboCrate</h2>
-        <div className="space-y-4 text-sm text-muted-foreground">
-          <p>
-            RaspboCrate is an admin interface for managing Raspberry Pi devices
-            running RO-Crate catalogue services:
-          </p>
-          <ul className="list-disc list-inside space-y-2 ml-2">
-            <li>
-              <strong className="text-foreground">oni-ui</strong> - A web
-              interface for browsing and searching RO-Crate catalogues
-            </li>
-            <li>
-              <strong className="text-foreground">arocapi</strong> - The API
-              backend that serves catalogue data
-            </li>
-          </ul>
-          <p>
-            Use the sidebar to navigate between importing data from USB drives,
-            managing services, and monitoring containers.
-          </p>
-        </div>
       </div>
     </div>
   );
