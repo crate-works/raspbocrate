@@ -97,19 +97,19 @@ await fastify.register(arocapi, {
 
       // Check file exists
       try {
-        await stat(filePath);
+        const fileStat = await stat(filePath);
+
+        return {
+          type: 'stream',
+          stream: createReadStream(filePath),
+          metadata: {
+            contentType: file.mediaType,
+            contentLength: fileStat.size,
+          },
+        };
       } catch {
         return false;
       }
-
-      return {
-        type: 'stream',
-        stream: createReadStream(filePath),
-        metadata: {
-          contentType: file.mediaType,
-          contentLength: Number(file.size),
-        },
-      };
     },
     head: async (file) => {
       const filePath = (file.meta as { filePath?: string })?.filePath;
