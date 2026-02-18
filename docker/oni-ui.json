@@ -8,7 +8,7 @@
     "home": {
       "enabled": true,
       "hero": {
-        "title": "Welcome to Rasbocrate",
+        "title": "Welcome to Raspbocrate",
         "subtitle": "Your trusted tool for managing catalogs in the field"
       },
       "content": "<div class='text-left text-gray-700'><div><h3 class='text-lg font-semibold mb-2'>TODO</h3><p>TODO</p></div>"
@@ -20,7 +20,7 @@
     "footer": {
       "copyright": "© 2025",
       "link": {
-        "href": "https://TBA",
+        "href": "https://paradisec.org.au",
         "text": "PARADISEC"
       }
     },
@@ -78,7 +78,6 @@
           "@id",
           "identifier.identifier",
           "dateCreated",
-          "contentLocation",
           "collector",
           "inLanguage",
           "ldac:subjectLanguage",
@@ -102,7 +101,6 @@
           "datePublished",
           "@id",
           "identifier.identifier",
-          "contentLocation",
           "collector",
           "speaker",
           "singer",
