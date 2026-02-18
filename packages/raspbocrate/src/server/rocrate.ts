@@ -230,32 +230,49 @@ const parseRoCrate = async (
     if (hasPart) {
       const parts = Array.isArray(hasPart) ? hasPart : [hasPart];
 
-      parts.forEach((part: Record<string, unknown>) => {
-        if (!part || typeof part !== 'object') return;
+      parts.forEach(
+        (part: {
+          '@id': string;
+          '@type'?: string | string[];
+          filename?: string;
+          name?: string;
+          contentSize?: number;
+          encodingFormat?: string;
+        }) => {
+          if (!part || typeof part !== 'object') return;
 
-        const partType = getEntityType(part as { '@type'?: string | string[] });
+          const partType = getEntityType(part);
 
-        if (isMediaType(partType)) {
-          // It's a media file
-          const partAtId = part['@id'] as string;
-          mediaFiles.push({
-            id: partAtId,
-            atId: partAtId,
-            name: getEntityName(
-              part as { name?: string | string[]; '@id': string },
-            ),
-            path: path.join(cratePath, part.filename as string),
-            encodingFormat: part.encodingFormat as string | undefined,
-            contentSize:
-              part.contentSize != null ? Number(part.contentSize) : undefined,
-          });
-        } else if (
-          isDataEntity(part as { '@type'?: string | string[]; '@id': string })
-        ) {
-          // It's a nested entity (like a Dataset)
-          children.push(buildEntityTree(part, visited));
-        }
-      });
+          if (isMediaType(partType)) {
+            // It's a media file
+            const partAtId = part['@id'] as string;
+
+            const filename =
+              part.filename || part.name || part['@id'].split('/').pop();
+            console.log('🪚 filename:', part['@id'], filename);
+            if (!filename) {
+              console.error(
+                `Media entity ${partAtId} is missing filename or name property`,
+              );
+              return;
+            }
+
+            mediaFiles.push({
+              id: partAtId,
+              atId: partAtId,
+              name: getEntityName(part),
+              path: path.join(cratePath, filename),
+              encodingFormat: part.encodingFormat,
+              contentSize: part.contentSize,
+            });
+          } else if (
+            isDataEntity(part as { '@type'?: string | string[]; '@id': string })
+          ) {
+            // It's a nested entity (like a Dataset)
+            children.push(buildEntityTree(part, visited));
+          }
+        },
+      );
     }
 
     return {

@@ -77,11 +77,17 @@ const filterAndCopyCrate = async (
 
       hasPartIds.add(partId);
 
-      const resolved = graphMap.get(partId);
+      const resolved = graphMap.get(partId) as
+        | { '@id': string; filename?: string; name?: string }
+        | undefined;
       if (resolved) {
         const filePath =
-          (resolved.filename as string) || (resolved['@id'] as string);
-        hasPartFilePaths.add(filePath);
+          resolved.filename ||
+          resolved.name ||
+          resolved['@id'].split('/').pop();
+        if (filePath) {
+          hasPartFilePaths.add(filePath);
+        }
       }
     });
   });
@@ -90,10 +96,19 @@ const filterAndCopyCrate = async (
   const removedIds = new Set<string>();
 
   const existPromises = [...hasPartIds].map(async (id) => {
-    const entry = graphMap.get(id);
+    const entry = graphMap.get(id) as {
+      '@id': string;
+      filename?: string;
+      name?: string;
+    };
     if (!entry) return;
 
-    const filePath = (entry.filename as string) || (entry['@id'] as string);
+    const filePath =
+      entry.filename || entry.name || entry['@id'].split('/').pop();
+    if (!filePath) {
+      removedIds.add(id);
+      return;
+    }
 
     try {
       await stat(path.join(driveCratePath, filePath));
