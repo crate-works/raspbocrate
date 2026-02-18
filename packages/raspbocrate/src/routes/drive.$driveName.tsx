@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { createServerFn, useServerFn } from '@tanstack/react-start';
@@ -18,6 +19,7 @@ type ImportResult = {
     entitiesUpdated: number;
     filesCreated: number;
     filesUpdated: number;
+    filesSkipped: number;
     errors: string[];
   };
   error?: string;
@@ -29,11 +31,14 @@ const ImportDriveCratesSchema = z.object({
 const importDriveCrates = createServerFn({ method: 'POST' })
   .inputValidator(ImportDriveCratesSchema)
   .handler(async ({ data: { drivePath } }) => {
+    const dataDir = process.env.DATA_DIR || path.join(process.cwd(), 'data');
+
     const stats: ImportStats = {
       entitiesCreated: 0,
       entitiesUpdated: 0,
       filesCreated: 0,
       filesUpdated: 0,
+      filesSkipped: 0,
       errors: [],
     };
 
@@ -42,7 +47,13 @@ const importDriveCrates = createServerFn({ method: 'POST' })
       const contents = await getServerDriveContents({ data: { drivePath } });
 
       // Process all crates
-      await processCrateTree(contents.crateTree, drivePath, null, stats);
+      await processCrateTree(
+        contents.crateTree,
+        drivePath,
+        null,
+        stats,
+        dataDir,
+      );
 
       return {
         success: true,
@@ -154,6 +165,9 @@ const DriveDetailContent = ({
         const hasErrors = stats.errors.length > 0;
 
         let message = `Imported: ${created} created, ${updated} updated`;
+        if (stats.filesSkipped > 0) {
+          message += `, ${stats.filesSkipped} files skipped (not on disk)`;
+        }
         if (hasErrors) {
           message += ` (${stats.errors.length} errors)`;
         }
@@ -210,7 +224,7 @@ const DriveDetailContent = ({
           ) : (
             <>
               <Import className="h-4 w-4 mr-2" />
-              Import
+              Import Metadata
             </>
           )}
         </Button>

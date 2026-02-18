@@ -1,4 +1,4 @@
-import { stat } from 'node:fs/promises';
+import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 import { prisma } from '@/db';
@@ -33,11 +33,145 @@ const findType = (type: string | string[]): string => {
   return types.find((t) => t.includes('pcdm')) || types[0];
 };
 
+type GraphEntry = Record<string, unknown>;
+
+const filterAndCopyCrate = async (
+  driveCratePath: string,
+  localCratePath: string,
+  stats: ImportStats,
+): Promise<void> => {
+  const srcFile = path.join(driveCratePath, 'ro-crate-metadata.json');
+  const content = await readFile(srcFile, 'utf-8');
+  const data = JSON.parse(content) as { '@graph': GraphEntry[] } & Record<
+    string,
+    unknown
+  >;
+
+  const graph: GraphEntry[] = data['@graph'];
+
+  // Build lookup map
+  const graphMap = new Map<string, GraphEntry>();
+  graph.forEach((entry) => {
+    const id = entry['@id'] as string;
+    if (id) {
+      graphMap.set(id, entry);
+    }
+  });
+
+  // Collect all hasPart-referenced IDs and resolve their file paths
+  const hasPartIds = new Set<string>();
+  const hasPartFilePaths = new Set<string>();
+
+  graph.forEach((entry) => {
+    const hasPart = entry.hasPart;
+    if (!hasPart) return;
+
+    const parts: unknown[] = Array.isArray(hasPart) ? hasPart : [hasPart];
+
+    parts.forEach((part) => {
+      if (!part || typeof part !== 'object') return;
+
+      const partRef = part as { '@id'?: string };
+      const partId = partRef['@id'];
+      if (!partId) return;
+
+      hasPartIds.add(partId);
+
+      const resolved = graphMap.get(partId);
+      if (resolved) {
+        const filePath =
+          (resolved.filename as string) || (resolved['@id'] as string);
+        hasPartFilePaths.add(filePath);
+      }
+    });
+  });
+
+  // Check which hasPart items exist on disk — remove those that don't
+  const removedIds = new Set<string>();
+
+  const existPromises = [...hasPartIds].map(async (id) => {
+    const entry = graphMap.get(id);
+    if (!entry) return;
+
+    const filePath = (entry.filename as string) || (entry['@id'] as string);
+
+    try {
+      await stat(path.join(driveCratePath, filePath));
+    } catch {
+      removedIds.add(id);
+    }
+  });
+
+  await Promise.all(existPromises);
+
+  stats.filesSkipped += removedIds.size;
+
+  // Check for files on disk not referenced by any hasPart
+  try {
+    const diskEntries = await readdir(driveCratePath, { withFileTypes: true });
+
+    diskEntries.forEach((entry) => {
+      if (!entry.isFile()) return;
+      if (entry.name === 'ro-crate-metadata.json') return;
+
+      if (!hasPartFilePaths.has(entry.name)) {
+        stats.errors.push(
+          `Unmatched file on disk: ${path.join(driveCratePath, entry.name)} is not referenced in hasPart`,
+        );
+      }
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : 'Unknown error occurred';
+    stats.errors.push(
+      `Failed to read crate directory ${driveCratePath}: ${message}`,
+    );
+  }
+
+  // Filter hasPart arrays to remove missing references
+  graph.forEach((entry) => {
+    const hasPart = entry.hasPart;
+    if (!hasPart) return;
+
+    const parts: unknown[] = Array.isArray(hasPart) ? hasPart : [hasPart];
+    const filtered = parts.filter((part) => {
+      if (!part || typeof part !== 'object') return true;
+
+      const partRef = part as { '@id'?: string };
+
+      return !partRef['@id'] || !removedIds.has(partRef['@id']);
+    });
+
+    if (filtered.length === 0) {
+      delete entry.hasPart;
+    } else if (filtered.length === 1) {
+      entry.hasPart = filtered[0];
+    } else {
+      entry.hasPart = filtered;
+    }
+  });
+
+  // Remove entries from @graph
+  data['@graph'] = graph.filter((entry) => {
+    const id = entry['@id'] as string;
+
+    return !id || !removedIds.has(id);
+  });
+
+  // Write filtered metadata to local path
+  await mkdir(localCratePath, { recursive: true });
+  await writeFile(
+    path.join(localCratePath, 'ro-crate-metadata.json'),
+    JSON.stringify(data, null, 2),
+  );
+};
+
 export type ImportStats = {
   entitiesCreated: number;
   entitiesUpdated: number;
   filesCreated: number;
   filesUpdated: number;
+  filesSkipped: number;
   errors: string[];
 };
 
@@ -141,25 +275,22 @@ const processFile = async (
   stats: ImportStats,
 ): Promise<void> => {
   try {
-    // Check file size from filesystem if contentSize not provided
-    // Use atId for the file path since it's the actual path in the crate
-    let size = file.contentSize;
+    // Skip files that don't exist on disk
+    let fileSize: number;
+    try {
+      const fileStat = await stat(file.path);
+      fileSize = file.contentSize || fileStat.size;
+    } catch {
+      stats.filesSkipped++;
 
-    if (!size) {
-      try {
-        const fileStat = await stat(file.path);
-        size = fileStat.size;
-      } catch {
-        size = 0;
-        // File might not exist or be inaccessible, use 0
-      }
+      return;
     }
 
     const fileData = {
       fileId: file.id,
       filename: file.name,
       mediaType: file.encodingFormat || 'application/octet-stream',
-      size,
+      size: fileSize,
       memberOf: parentEntityId,
       rootCollection: rootCollectionId,
       contentLicenseId: 'foo',
@@ -202,7 +333,7 @@ const processFile = async (
         {
           '@id': file.id,
           '@type': 'File',
-          contentSize: Number(size),
+          contentSize: Number(fileSize),
           encodingFormat: mediaType,
           name: file.name,
           filename: file.path,
@@ -286,13 +417,18 @@ const processCrate = async (
   basePath: string,
   parentId: string | null,
   stats: ImportStats,
+  dataDir: string,
 ): Promise<void> => {
-  const cratePath = path.join(basePath, crate.path);
+  const driveCratePath = path.join(basePath, crate.path);
+  const localCratePath = path.join(dataDir, crate.path);
+
+  await filterAndCopyCrate(driveCratePath, localCratePath, stats);
+
   const rootCollectionId = crate.rootEntity.id;
 
   await processEntity(
     crate.rootEntity,
-    cratePath,
+    localCratePath,
     rootCollectionId,
     parentId,
     stats,
@@ -304,9 +440,10 @@ const processCrateTreeInner = async (
   basePath: string,
   parentId: string | null,
   stats: ImportStats,
+  dataDir: string,
 ): Promise<void> => {
   for (const node of nodes) {
-    await processCrate(node.crate, basePath, parentId, stats);
+    await processCrate(node.crate, basePath, parentId, stats, dataDir);
 
     const childrenParentId = node.crate.rootEntity.id;
 
@@ -317,6 +454,7 @@ const processCrateTreeInner = async (
         basePath,
         childrenParentId,
         stats,
+        dataDir,
       );
     }
   }
@@ -327,6 +465,7 @@ export const processCrateTree = async (
   basePath: string,
   parentId: string | null,
   stats: ImportStats,
+  dataDir: string,
 ): Promise<void> => {
   try {
     await ensureIndex();
@@ -336,7 +475,7 @@ export const processCrateTree = async (
     stats.errors.push(`OpenSearch index setup: ${message}`);
   }
 
-  await processCrateTreeInner(nodes, basePath, parentId, stats);
+  await processCrateTreeInner(nodes, basePath, parentId, stats, dataDir);
 
   try {
     await refreshIndex();

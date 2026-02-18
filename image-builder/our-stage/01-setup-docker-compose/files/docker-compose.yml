@@ -47,6 +47,7 @@ services:
       - "3000:4000"
     volumes:
       - /media:/media:rslave
+      - crate_data:/data
 
   raspbocrate:
     image: ghcr.io/paradisec-archive/raspbocrate
@@ -63,8 +64,10 @@ services:
       DATABASE_PASSWORD: password
       DATABASE_NAME: raspbocapi
       OPENSEARCH_URL: http://opensearch:9200
+      DATA_DIR: /data
     volumes:
       - /media:/media:rslave
+      - crate_data:/data
 
   oni-ui:
     image: ghcr.io/language-research-technology/oni-ui:new-api
@@ -100,3 +103,4 @@ services:
 volumes:
   mysql_data:
   opensearch_data:
+  crate_data:
