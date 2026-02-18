@@ -1,3 +1,18 @@
+# [1.7.0](https://github.com/paradisec-archive/raspbocrate/compare/v1.6.2...v1.7.0) (2026-02-18)
+
+
+### Bug Fixes
+
+* better filepath conversion from ro-crate to what is on disk ([46ca0b7](https://github.com/paradisec-archive/raspbocrate/commit/46ca0b787035ae171a14132451ea69e14064901c))
+* minor oni config updates ([2aa77c1](https://github.com/paradisec-archive/raspbocrate/commit/2aa77c11b6d214d86a4f01ca5edea3f7094257e9))
+* **raspbocapi:** use filesystem size instead of db size in file handler get ([db7c611](https://github.com/paradisec-archive/raspbocrate/commit/db7c611583ce6d7b872f979e7d57c6c2b216ce8e))
+
+
+### Features
+
+* **raspbocrate:** copy and filter RO-Crate metadata to local filesystem ([c96ac48](https://github.com/paradisec-archive/raspbocrate/commit/c96ac4814fd2172c7e51269fbcd5dea2730173d3))
+* **raspbocrate:** show per-mimetype file counts and move about text ([c587983](https://github.com/paradisec-archive/raspbocrate/commit/c587983ed59c8acb82963dac9c301ab0b404a489))
+
 ## [1.6.2](https://github.com/paradisec-archive/raspbocrate/compare/v1.6.1...v1.6.2) (2026-02-16)
 
 
