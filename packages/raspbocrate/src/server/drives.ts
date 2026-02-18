@@ -53,7 +53,7 @@ const getUsbDrives = async (): Promise<Drive[]> => {
 
         return {
           name: partition.name,
-          mountpoint: partition.mountpoint,
+          mountpoint: partition.mountpoint || 'NOT MOUNTED',
           size: partition.size,
           label: partition.label || 'NO LABEL',
           hasCatalog,
