@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/paradisec-archive/raspbocrate/compare/v1.7.0...v1.7.1) (2026-02-19)
+
+
+### Bug Fixes
+
+* make sure raspbocrate container can write to /data ([cd16d4d](https://github.com/paradisec-archive/raspbocrate/commit/cd16d4d11a8917720e3f878face7ba5f0e2e22f8))
+
 # [1.7.0](https://github.com/paradisec-archive/raspbocrate/compare/v1.6.2...v1.7.0) (2026-02-18)
 
 
