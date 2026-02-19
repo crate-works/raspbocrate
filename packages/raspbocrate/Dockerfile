@@ -66,6 +66,8 @@ FROM node:22-slim AS prod
 RUN addgroup --system --gid 1001 app && \
   adduser --system --uid 1001 app
 
+RUN mkdir /data && chown -R app:app /data
+
 # Switch to non-root user
 USER app
 
