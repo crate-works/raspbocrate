@@ -22,7 +22,7 @@ const extractUsbPartitions = (devices: LsblkDevice[]): LsblkDevice[] => {
   const partitions: LsblkDevice[] = [];
 
   devices.forEach((device) => {
-    if (device.tran === 'usb' && device.rm && device.children) {
+    if (device.tran === 'usb' && device.children) {
       device.children.forEach((child) => {
         if (child.type === 'part' && child.mountpoint) {
           partitions.push(child);
