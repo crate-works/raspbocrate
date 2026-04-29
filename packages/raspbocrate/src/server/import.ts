@@ -1,7 +1,6 @@
 import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-
-import { prisma } from '#/db.ts';
+import { type Prisma, prisma } from '#/db.ts';
 import type {
   CrateEntity,
   CrateTreeNode,
@@ -204,8 +203,8 @@ const processEntity = async (
       where: { id: entityId },
     });
 
-    const entityData = {
-      rocrateId: entityId,
+    const entityData: Prisma.EntityCreateInput = {
+      id: entityId,
       name: entity.name,
       description: entity.description || '',
       entityType: findType(entity.type),
@@ -213,7 +212,6 @@ const processEntity = async (
       rootCollection: rootCollectionId,
       metadataLicenseId: 'foo',
       contentLicenseId: 'bar',
-      fileId: null,
       meta: {
         cratePath: cratePath,
       },
@@ -301,36 +299,6 @@ const processFile = async (
       return;
     }
 
-    const fileData = {
-      fileId: file.id,
-      filename: file.name,
-      mediaType: file.encodingFormat || 'application/octet-stream',
-      size: fileSize,
-      memberOf: parentEntityId,
-      rootCollection: rootCollectionId,
-      contentLicenseId: 'foo',
-      meta: {
-        filePath: file.path,
-      },
-    };
-
-    const existingFile = await prisma.file.findUnique({
-      where: { fileId: file.id },
-    });
-
-    if (existingFile) {
-      await prisma.file.update({
-        where: { fileId: file.id },
-        data: fileData,
-      });
-      stats.filesUpdated++;
-    } else {
-      await prisma.file.create({
-        data: fileData,
-      });
-      stats.filesCreated++;
-    }
-
     // Also create an Entity record for the file (MediaObject)
     const mediaType = file.encodingFormat || 'application/octet-stream';
     const virtualRoCrate = {
@@ -363,8 +331,8 @@ const processFile = async (
       ],
     };
 
-    const entityData = {
-      rocrateId: file.id,
+    const entityData: Prisma.EntityCreateInput = {
+      id: file.id,
       name: file.name,
       description: '',
       entityType: 'http://schema.org/MediaObject',
@@ -372,14 +340,13 @@ const processFile = async (
       rootCollection: rootCollectionId,
       metadataLicenseId: 'foo',
       contentLicenseId: 'bar',
-      fileId: file.id,
       meta: {
         rocrate: virtualRoCrate,
       },
     };
 
     const existingEntity = await prisma.entity.findFirst({
-      where: { rocrateId: file.id },
+      where: { id: file.id },
     });
 
     if (existingEntity) {
@@ -393,6 +360,33 @@ const processFile = async (
         data: entityData,
       });
       stats.entitiesCreated++;
+    }
+
+    const fileData: Prisma.FileCreateInput = {
+      entity: { connect: { id: file.id } },
+      filename: file.name,
+      mediaType: file.encodingFormat || 'application/octet-stream',
+      size: BigInt(fileSize),
+      meta: {
+        filePath: file.path,
+      },
+    };
+
+    const existingFile = await prisma.file.findUnique({
+      where: { id: file.id },
+    });
+
+    if (existingFile) {
+      await prisma.file.update({
+        where: { id: file.id },
+        data: fileData,
+      });
+      stats.filesUpdated++;
+    } else {
+      await prisma.file.create({
+        data: fileData,
+      });
+      stats.filesCreated++;
     }
 
     // Index file entity into OpenSearch
