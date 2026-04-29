@@ -11,7 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from '@/components/ui/sidebar';
+} from '#/components/ui/sidebar.tsx';
 
 export const AppSidebar = ({
   ...props

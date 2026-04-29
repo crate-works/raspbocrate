@@ -1,4 +1,4 @@
-import { opensearch } from '@/opensearch';
+import { opensearch } from '#/opensearch.ts';
 
 export const INDEX_NAME = 'entities';
 

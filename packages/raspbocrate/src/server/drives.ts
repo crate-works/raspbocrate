@@ -3,7 +3,7 @@ import { access, constants, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import { createServerFn } from '@tanstack/react-start';
-import type { Drive, LsblkDevice, LsblkOutput } from '@/types/usb';
+import type { Drive, LsblkDevice, LsblkOutput } from '#/types/usb.ts';
 
 const execFileAsync = promisify(execFile);
 

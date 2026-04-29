@@ -8,13 +8,13 @@ import {
   Scripts,
 } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
-import { AppSidebar } from '@/components/app-sidebar';
-import { Separator } from '@/components/ui/separator';
+import { AppSidebar } from '#/components/app-sidebar.tsx';
+import { Separator } from '#/components/ui/separator.tsx';
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from '@/components/ui/sidebar';
+} from '#/components/ui/sidebar.tsx';
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools';
 import appCss from '../styles.css?url';
 

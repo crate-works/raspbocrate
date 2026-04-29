@@ -1,5 +1,5 @@
-import { prisma } from '@/db';
-import { opensearch } from '@/opensearch';
+import { prisma } from '#/db.ts';
+import { opensearch } from '#/opensearch.ts';
 import { deleteIndex, INDEX_NAME } from './indexing';
 
 export type DataStats = {

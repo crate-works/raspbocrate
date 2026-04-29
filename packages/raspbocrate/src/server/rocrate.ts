@@ -9,7 +9,7 @@ import type {
   IndexData,
   MediaFile,
   RoCrateInfo,
-} from '@/types/rocrate';
+} from '#/types/rocrate.ts';
 
 const RO_CRATE_METADATA_FILENAME = 'ro-crate-metadata.json';
 

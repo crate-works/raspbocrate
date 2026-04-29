@@ -1,13 +1,13 @@
 import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import { prisma } from '@/db';
+import { prisma } from '#/db.ts';
 import type {
   CrateEntity,
   CrateTreeNode,
   MediaFile,
   RoCrateInfo,
-} from '@/types/rocrate';
+} from '#/types/rocrate.ts';
 import {
   type EntityDocument,
   ensureIndex,
@@ -201,7 +201,7 @@ const processEntity = async (
 
   try {
     const existing = await prisma.entity.findFirst({
-      where: { rocrateId: entityId },
+      where: { id: entityId },
     });
 
     const entityData = {

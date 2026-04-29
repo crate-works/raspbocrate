@@ -22,9 +22,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
-import { getDataStats, type ResetResult, resetAllData } from '@/server/reset';
+} from '#/components/ui/alert-dialog.tsx';
+import { Button } from '#/components/ui/button.tsx';
+import { getDataStats, type ResetResult, resetAllData } from '#/server/reset.ts';
 
 const fetchDataStats = createServerFn({ method: 'GET' }).handler(async () => {
   return await getDataStats();

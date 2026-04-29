@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { Folder, FolderOpen, FolderX, HardDrive } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import type { Drive } from '@/types/usb';
+import { cn } from '#/lib/utils.ts';
+import type { Drive } from '#/types/usb.ts';
 
 type DriveCardProps = {
   drive: Drive;

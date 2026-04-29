@@ -10,13 +10,13 @@ import {
   Video,
 } from 'lucide-react';
 import { useState } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '#/lib/utils.ts';
 import type {
   CrateEntity,
   CrateTreeNode,
   MediaFile,
   RoCrateInfo,
-} from '@/types/rocrate';
+} from '#/types/rocrate.ts';
 
 type MediaFileItemProps = {
   file: MediaFile;

@@ -5,12 +5,12 @@ import { createServerFn, useServerFn } from '@tanstack/react-start';
 import { ArrowLeft, HardDrive, Import, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import z from 'zod';
-import { CrateTreeList } from '@/components/CrateTree';
-import { Button } from '@/components/ui/button';
-import { getServerDrives } from '@/server/drives';
-import { type ImportStats, processCrateTree } from '@/server/import';
-import { getServerDriveContents } from '@/server/rocrate';
-import type { Drive } from '@/types/usb';
+import { CrateTreeList } from '#/components/CrateTree.tsx';
+import { Button } from '#/components/ui/button.tsx';
+import { getServerDrives } from '#/server/drives.ts';
+import { type ImportStats, processCrateTree } from '#/server/import.ts';
+import { getServerDriveContents } from '#/server/rocrate.ts';
+import type { Drive } from '#/types/usb.ts';
 
 type ImportResult = {
   success: boolean;

@@ -1,4 +1,4 @@
-import type { Drive } from '@/types/usb';
+import type { Drive } from '#/types/usb.ts';
 import { DriveCard } from './DriveCard';
 
 type DrivesListProps = {
