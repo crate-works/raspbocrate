@@ -2,8 +2,12 @@ packages:
   - packages/*
   - website
 
-onlyBuiltDependencies:
-  - '@prisma/engines'
-  - esbuild
-  - prisma
-  - sharp
+# Supply chain security
+# https://pnpm.io/supply-chain-security
+minimumReleaseAge: 4320 # 3 days, tighter than v11 default of 1440 (1 day)
+
+allowBuilds:
+  "@prisma/engines": true
+  esbuild: true
+  prisma: true
+  sharp: true

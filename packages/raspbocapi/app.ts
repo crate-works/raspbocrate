@@ -12,14 +12,6 @@ import arocapi, {
 import Fastify from 'fastify';
 import { PrismaClient } from './generated/prisma/client.ts';
 
-// NOTE: Only needed if you are going to use these yourself
-declare module 'fastify' {
-  interface FastifyInstance {
-    prisma: PrismaClient;
-    opensearch: Client;
-  }
-}
-
 const adapter = new PrismaMariaDb({
   host: process.env.DATABASE_HOST,
   user: process.env.DATABASE_USER,
@@ -42,9 +34,9 @@ const fastify = Fastify({
 });
 
 const entityTransformers: EntityTransformer[] = [
-  async (entity, { fastify }) => {
+  async (entity) => {
     const objectCount = entity.memberOf
-      ? await fastify.prisma.entity.count({
+      ? await prisma.entity.count({
           where: { memberOf: entity.id },
         })
       : 0;
@@ -56,13 +48,10 @@ const entityTransformers: EntityTransformer[] = [
       },
     };
   },
-  async (entity, { fastify }) => {
-    const files = await fastify.prisma.file.findMany({
+  async (entity) => {
+    const files = await prisma.file.findMany({
       where: {
-        OR: [
-          { memberOf: entity.id },
-          { memberOf: { startsWith: `${entity.id}/` } },
-        ],
+        OR: [{ id: entity.id }, { id: { startsWith: `${entity.id}/` } }],
       },
       select: { mediaType: true },
       distinct: ['mediaType'],
