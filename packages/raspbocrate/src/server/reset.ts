@@ -2,7 +2,7 @@ import { prisma } from '#/db.ts';
 import { opensearch } from '#/opensearch.ts';
 import { deleteIndex, INDEX_NAME } from './indexing';
 
-export type DataStats = {
+type DataStats = {
   entityCounts: { entityType: string; count: number }[];
   fileCounts: { mediaType: string; count: number }[];
   indexCount: number;

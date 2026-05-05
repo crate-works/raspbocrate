@@ -2,7 +2,6 @@
   "name": "raspbocapi",
   "version": "1.0.0",
   "description": "RO-Crate API endpoint for raspbocrate",
-  "main": "app.js",
   "type": "module",
   "directories": {
     "test": "test"
@@ -16,7 +15,6 @@
   },
   "devDependencies": {
     "@types/node": "^24.12.2",
-    "fastify-cli": "^8.0.0",
     "prisma": "^7.8.0",
     "typescript": "^6.0.3"
   },

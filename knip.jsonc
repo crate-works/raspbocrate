@@ -1,0 +1,19 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema-jsonc.json",
+  // Exclude files tagged with @lintignore from analysis
+  "tags": ["-lintignore"],
+  // 'build' is `pnpm build` invoked in .github/workflows/deploy-website.yml — knip can't see workflow context
+  "ignoreBinaries": ["build"],
+  "workspaces": {
+    ".": {},
+    "packages/raspbocrate": {
+      // shadcn/ui components are a copy-in catalogue managed via the shadcn CLI;
+      // unused re-exports from these files are expected
+      "ignore": ["src/components/ui/**"],
+      // Imported only by Prisma's generated client (which has @ts-nocheck and is invisible to knip)
+      "ignoreDependencies": ["@prisma/client"]
+    },
+    "packages/raspbocapi": {},
+    "website": {}
+  }
+}

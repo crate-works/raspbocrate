@@ -5,7 +5,8 @@
       "Bash(tree:*)",
       "Bash(wc:*)",
       "Bash(pnpm lint:types:*)",
-      "Bash(git diff *)"
+      "Bash(git diff *)",
+      "Bash(pnpm lint:knip)"
     ]
   }
 }

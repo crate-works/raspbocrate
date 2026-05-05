@@ -2,12 +2,12 @@
   "name": "raspbocrate",
   "version": "1.7.1",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "lint:biome": "biome check .",
     "lint:types": "pnpm -r --filter './packages/*' run lint:types",
     "docker:raspbocrate": "docker build -f packages/raspbocrate/Dockerfile -t raspbocrate .",
-    "docker:raspbocapi": "docker build -f packages/raspbocapi/Dockerfile -t raspbocapi ."
+    "docker:raspbocapi": "docker build -f packages/raspbocapi/Dockerfile -t raspbocapi .",
+    "lint:knip": "DATABASE_URL=mysql://placeholder knip"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +18,9 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/exec": "^7.1.0",
     "@semantic-release/git": "^10.0.1",
-    "semantic-release": "^25.0.3"
+    "@types/node": "^24.12.2",
+    "knip": "^6.10.0",
+    "semantic-release": "^25.0.3",
+    "typescript": "^6.0.3"
   }
 }

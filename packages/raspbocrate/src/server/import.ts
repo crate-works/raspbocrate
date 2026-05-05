@@ -198,7 +198,7 @@ export const blankStats = (): ImportStats => ({
   errors: [],
 });
 
-export type ImportProgress = {
+type ImportProgress = {
   setCurrentItem?: (label: string) => void;
   tickProcessed?: () => void;
 };

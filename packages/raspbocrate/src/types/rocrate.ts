@@ -41,8 +41,3 @@ export type CrateTreeNode = {
   crate: RoCrateInfo;
   children: CrateTreeNode[];
 };
-
-export type DriveContents = {
-  drivePath: string;
-  crateTree: CrateTreeNode[];
-};

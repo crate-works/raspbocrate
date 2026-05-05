@@ -10,14 +10,9 @@ import {
 } from '#/server/import.ts';
 import { getServerDriveContents } from '#/server/rocrate.ts';
 
-export type ImportJobPhase =
-  | 'preparing'
-  | 'importing'
-  | 'done'
-  | 'failed'
-  | 'lost';
+type ImportJobPhase = 'preparing' | 'importing' | 'done' | 'failed' | 'lost';
 
-export type ImportJobState = {
+type ImportJobState = {
   jobId: string;
   drivePath: string;
   phase: ImportJobPhase;
