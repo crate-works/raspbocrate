@@ -81,3 +81,17 @@ Both packages use Prisma with the MariaDB adapter. Environment variables are loa
 
 - The raspbocrate dev server serves at `localhost:3000/admin/` (Vite `base: '/admin/'`)
 - The Pi image-builder docker-compose uses an nginx reverse proxy: `/` → ONI-UI, `/admin` → raspbocrate, `/admin/containers` → Dozzle
+
+## Agent skills
+
+### Issue tracker
+
+Issues live as GitHub issues in `paradisec-archive/raspbocrate`, managed via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default canonical labels (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context — one `CONTEXT.md` and one `docs/adr/` at the repo root (neither exists yet; created lazily by `/grill-with-docs`). See `docs/agents/domain.md`.

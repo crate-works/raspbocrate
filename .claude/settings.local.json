@@ -4,7 +4,8 @@
       "Bash(pnpm lint:biome:*)",
       "Bash(tree:*)",
       "Bash(wc:*)",
-      "Bash(pnpm lint:types:*)"
+      "Bash(pnpm lint:types:*)",
+      "Bash(git diff *)"
     ]
   }
 }

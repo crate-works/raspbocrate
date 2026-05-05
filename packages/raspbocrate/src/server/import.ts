@@ -189,13 +189,29 @@ export type ImportStats = {
   errors: string[];
 };
 
+export const blankStats = (): ImportStats => ({
+  entitiesCreated: 0,
+  entitiesUpdated: 0,
+  filesCreated: 0,
+  filesUpdated: 0,
+  filesSkipped: 0,
+  errors: [],
+});
+
+export type ImportProgress = {
+  setCurrentItem?: (label: string) => void;
+  tickProcessed?: () => void;
+};
+
 const processEntity = async (
   entity: CrateEntity,
   cratePath: string,
   rootCollectionId: string,
   parentId: string | null,
   stats: ImportStats,
+  progress?: ImportProgress,
 ): Promise<void> => {
+  progress?.setCurrentItem?.(`Entity: ${entity.name || entity.id}`);
   const entityId = entity.id;
 
   try {
@@ -232,7 +248,7 @@ const processEntity = async (
 
     // Process media files
     for (const file of entity.mediaFiles) {
-      await processFile(file, rootCollectionId, entityId, stats);
+      await processFile(file, rootCollectionId, entityId, stats, progress);
     }
 
     // Index entity into OpenSearch
@@ -272,12 +288,21 @@ const processEntity = async (
 
     // Process child entities
     for (const child of entity.children) {
-      await processEntity(child, cratePath, rootCollectionId, entityId, stats);
+      await processEntity(
+        child,
+        cratePath,
+        rootCollectionId,
+        entityId,
+        stats,
+        progress,
+      );
     }
   } catch (error) {
     const message =
       error instanceof Error ? error.message : 'Unknown error occurred';
     stats.errors.push(`Entity ${entityId}: ${message}`);
+  } finally {
+    progress?.tickProcessed?.();
   }
 };
 
@@ -286,7 +311,9 @@ const processFile = async (
   rootCollectionId: string,
   parentEntityId: string,
   stats: ImportStats,
+  progress?: ImportProgress,
 ): Promise<void> => {
+  progress?.setCurrentItem?.(`File: ${file.name || file.id}`);
   try {
     // Skip files that don't exist on disk
     let fileSize: number;
@@ -418,6 +445,8 @@ const processFile = async (
     const message =
       error instanceof Error ? error.message : 'Unknown error occurred';
     stats.errors.push(`File ${file.id}: ${message}`);
+  } finally {
+    progress?.tickProcessed?.();
   }
 };
 
@@ -427,7 +456,12 @@ const processCrate = async (
   parentId: string | null,
   stats: ImportStats,
   dataDir: string,
+  progress?: ImportProgress,
 ): Promise<void> => {
+  progress?.setCurrentItem?.(
+    `Preparing crate: ${crate.rootEntity.name || crate.rootEntity.id}`,
+  );
+
   const driveCratePath = path.join(basePath, crate.path);
   const localCratePath = path.join(dataDir, crate.path);
 
@@ -441,6 +475,7 @@ const processCrate = async (
     rootCollectionId,
     parentId,
     stats,
+    progress,
   );
 };
 
@@ -450,9 +485,17 @@ const processCrateTreeInner = async (
   parentId: string | null,
   stats: ImportStats,
   dataDir: string,
+  progress?: ImportProgress,
 ): Promise<void> => {
   for (const node of nodes) {
-    await processCrate(node.crate, basePath, parentId, stats, dataDir);
+    await processCrate(
+      node.crate,
+      basePath,
+      parentId,
+      stats,
+      dataDir,
+      progress,
+    );
 
     const childrenParentId = node.crate.rootEntity.id;
 
@@ -464,6 +507,7 @@ const processCrateTreeInner = async (
         childrenParentId,
         stats,
         dataDir,
+        progress,
       );
     }
   }
@@ -475,6 +519,7 @@ export const processCrateTree = async (
   parentId: string | null,
   stats: ImportStats,
   dataDir: string,
+  progress?: ImportProgress,
 ): Promise<void> => {
   try {
     await ensureIndex();
@@ -484,7 +529,14 @@ export const processCrateTree = async (
     stats.errors.push(`OpenSearch index setup: ${message}`);
   }
 
-  await processCrateTreeInner(nodes, basePath, parentId, stats, dataDir);
+  await processCrateTreeInner(
+    nodes,
+    basePath,
+    parentId,
+    stats,
+    dataDir,
+    progress,
+  );
 
   try {
     await refreshIndex();
@@ -493,4 +545,22 @@ export const processCrateTree = async (
       error instanceof Error ? error.message : 'Unknown error occurred';
     stats.errors.push(`OpenSearch index refresh: ${message}`);
   }
+};
+
+const countEntityItems = (entity: CrateEntity): number => {
+  let count = 1; // the entity itself
+  count += entity.mediaFiles.length;
+  for (const child of entity.children) {
+    count += countEntityItems(child);
+  }
+  return count;
+};
+
+export const countTreeItems = (nodes: CrateTreeNode[]): number => {
+  let total = 0;
+  for (const node of nodes) {
+    total += countEntityItems(node.crate.rootEntity);
+    total += countTreeItems(node.children);
+  }
+  return total;
 };
