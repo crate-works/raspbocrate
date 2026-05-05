@@ -7,11 +7,14 @@
   "workspaces": {
     ".": {},
     "packages/raspbocrate": {
-      // shadcn/ui components are a copy-in catalogue managed via the shadcn CLI;
-      // unused re-exports from these files are expected
+      // shadcn/ui components are a copy-in catalogue managed via the shadcn CLI; unused re-exports from these files are expected
       "ignore": ["src/components/ui/**"],
-      // Imported only by Prisma's generated client (which has @ts-nocheck and is invisible to knip)
-      "ignoreDependencies": ["@prisma/client"]
+      "ignoreDependencies": [
+        // Imported only by Prisma's generated client (which has @ts-nocheck and is invisible to knip)
+        "@prisma/client",
+        // Needed for the models
+        "arocapi"
+      ]
     },
     "packages/raspbocapi": {},
     "website": {}
