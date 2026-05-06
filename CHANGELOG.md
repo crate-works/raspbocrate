@@ -1,3 +1,19 @@
+# [1.8.0](https://github.com/paradisec-archive/raspbocrate/compare/v1.7.1...v1.8.0) (2026-05-06)
+
+
+### Bug Fixes
+
+* changes for latest arocapi ([94cff22](https://github.com/paradisec-archive/raspbocrate/commit/94cff2277144b9395bcf200899441d9a5092ca48))
+* need arocapi for raspbocrate models schema ([8e07c05](https://github.com/paradisec-archive/raspbocrate/commit/8e07c05f66e3a3a653f04ff6fafc337ad2b4ea85))
+* remove patches now integrated upstream ([c85ae70](https://github.com/paradisec-archive/raspbocrate/commit/c85ae70970154ea3a90c0bfebff0794a1d632d67))
+* removeable devices that don't look removable ([5af09fd](https://github.com/paradisec-archive/raspbocrate/commit/5af09fde80899caf8b83b3d462e6f43b1645736a))
+* switch website to @tailwindcss/postcss to unblock build ([c266c09](https://github.com/paradisec-archive/raspbocrate/commit/c266c09ed99ec04a2861033c456c65dedaebb598)), closes [withastro/astro#16542](https://github.com/withastro/astro/issues/16542)
+
+
+### Features
+
+* poll drive imports to avoid nginx timeouts ([f003af6](https://github.com/paradisec-archive/raspbocrate/commit/f003af629577749547e567e3bfdfd2935baca254))
+
 ## [1.7.1](https://github.com/paradisec-archive/raspbocrate/compare/v1.7.0...v1.7.1) (2026-02-19)
 
 
