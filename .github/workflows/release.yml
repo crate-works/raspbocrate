@@ -234,6 +234,8 @@ jobs:
 
       - name: Find and compress image
         id: compress
+        env:
+          VERSION: ${{ needs.determine-version.outputs.version }}
         run: |
           # Find the generated image
           IMAGE_PATH=$(find image-builder/deploy -name "*.img" -type f | head -1)
@@ -243,6 +245,11 @@ jobs:
             ls -la image-builder/deploy/
             exit 1
           fi
+
+          # Rename to versioned filename
+          RENAMED_PATH="$(dirname "$IMAGE_PATH")/raspbocrate-v${VERSION}.img"
+          mv "$IMAGE_PATH" "$RENAMED_PATH"
+          IMAGE_PATH="$RENAMED_PATH"
 
           echo "Found image: $IMAGE_PATH"
           IMAGE_NAME=$(basename "$IMAGE_PATH")
