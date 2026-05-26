@@ -6,5 +6,5 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://raspbocrate.inodes.dev',
+  site: 'https://raspbocrate.crate-works.org',
 });

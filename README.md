@@ -4,7 +4,7 @@
 
 A Raspberry Pi-based system for managing RO-Crate catalogues in remote locations.
 
-**[View Documentation & Downloads](https://raspbocrate.inodes.dev)**
+**[View Documentation & Downloads](https://raspbocrate.crate-works.org)**
 
 ---
 
