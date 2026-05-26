@@ -31,6 +31,7 @@ export type CrateEntity = {
 
 export type RoCrateInfo = {
   path: string;
+  metadataFilename: string;
   name: string;
   description?: string;
   rootEntity: CrateEntity;

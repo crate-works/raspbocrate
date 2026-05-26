@@ -11,7 +11,11 @@ import type {
   RoCrateInfo,
 } from '#/types/rocrate.ts';
 
-const RO_CRATE_METADATA_FILENAME = 'ro-crate-metadata.json';
+const RO_CRATE_METADATA_SUFFIX = 'ro-crate-metadata.json';
+
+export const isRoCrateMetadataFile = (name: string): boolean =>
+  name === RO_CRATE_METADATA_SUFFIX ||
+  name.endsWith(`-${RO_CRATE_METADATA_SUFFIX}`);
 
 const findRoCrateFiles = async (basePath: string): Promise<string[]> => {
   const roCrateFiles: string[] = [];
@@ -21,14 +25,13 @@ const findRoCrateFiles = async (basePath: string): Promise<string[]> => {
       const entries = await readdir(dirPath, { withFileTypes: true });
 
       for (const entry of entries) {
+        if (entry.name.startsWith('.')) continue;
+
         const fullPath = path.join(dirPath, entry.name);
 
         if (entry.isDirectory()) {
           await scanDirectory(fullPath);
-        } else if (
-          entry.isFile() &&
-          entry.name === RO_CRATE_METADATA_FILENAME
-        ) {
+        } else if (entry.isFile() && isRoCrateMetadataFile(entry.name)) {
           roCrateFiles.push(fullPath);
         }
       }
@@ -293,6 +296,7 @@ const parseRoCrate = async (
 
   return {
     path: relativePath || '.',
+    metadataFilename: path.basename(filePath),
     name: getEntityName(
       rootDataset as { name?: string | string[]; '@id': string },
     ),

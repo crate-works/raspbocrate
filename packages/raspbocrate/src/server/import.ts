@@ -13,6 +13,7 @@ import {
   indexEntityDocument,
   refreshIndex,
 } from './indexing';
+import { isRoCrateMetadataFile } from './rocrate';
 
 const findType = (type: string | string[]): string => {
   const types = Array.isArray(type) ? type : [type];
@@ -37,9 +38,10 @@ type GraphEntry = Record<string, unknown>;
 const filterAndCopyCrate = async (
   driveCratePath: string,
   localCratePath: string,
+  metadataFilename: string,
   stats: ImportStats,
 ): Promise<void> => {
-  const srcFile = path.join(driveCratePath, 'ro-crate-metadata.json');
+  const srcFile = path.join(driveCratePath, metadataFilename);
   const content = await readFile(srcFile, 'utf-8');
   const data = JSON.parse(content) as { '@graph': GraphEntry[] } & Record<
     string,
@@ -126,7 +128,8 @@ const filterAndCopyCrate = async (
 
     diskEntries.forEach((entry) => {
       if (!entry.isFile()) return;
-      if (entry.name === 'ro-crate-metadata.json') return;
+      if (entry.name.startsWith('.')) return;
+      if (isRoCrateMetadataFile(entry.name)) return;
 
       if (!hasPartFilePaths.has(entry.name)) {
         stats.errors.push(
@@ -175,7 +178,7 @@ const filterAndCopyCrate = async (
   // Write filtered metadata to local path
   await mkdir(localCratePath, { recursive: true });
   await writeFile(
-    path.join(localCratePath, 'ro-crate-metadata.json'),
+    path.join(localCratePath, metadataFilename),
     JSON.stringify(data, null, 2),
   );
 };
@@ -465,7 +468,12 @@ const processCrate = async (
   const driveCratePath = path.join(basePath, crate.path);
   const localCratePath = path.join(dataDir, crate.path);
 
-  await filterAndCopyCrate(driveCratePath, localCratePath, stats);
+  await filterAndCopyCrate(
+    driveCratePath,
+    localCratePath,
+    crate.metadataFilename,
+    stats,
+  );
 
   const rootCollectionId = crate.rootEntity.id;
 
