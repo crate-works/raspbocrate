@@ -85,7 +85,7 @@ jobs:
         id: tags
         env:
           VERSION: ${{ needs.determine-version.outputs.version }}
-          IMAGE: ghcr.io/paradisec-archive/raspbocrate
+          IMAGE: ghcr.io/crate-works/raspbocrate
         run: |
           MAJOR_MINOR="${VERSION%.*}"
 
@@ -129,7 +129,7 @@ jobs:
         id: tags
         env:
           VERSION: ${{ needs.determine-version.outputs.version }}
-          IMAGE: ghcr.io/paradisec-archive/raspbocapi
+          IMAGE: ghcr.io/crate-works/raspbocapi
         run: |
           MAJOR_MINOR="${VERSION%.*}"
 
@@ -173,7 +173,7 @@ jobs:
         id: tags
         env:
           VERSION: ${{ needs.determine-version.outputs.version }}
-          IMAGE: ghcr.io/paradisec-archive/opensearch
+          IMAGE: ghcr.io/crate-works/opensearch
         run: |
           MAJOR_MINOR="${VERSION%.*}"
 

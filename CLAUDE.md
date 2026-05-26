@@ -86,7 +86,7 @@ Both packages use Prisma with the MariaDB adapter. Environment variables are loa
 
 ### Issue tracker
 
-Issues live as GitHub issues in `paradisec-archive/raspbocrate`, managed via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+Issues live as GitHub issues in `crate-works/raspbocrate`, managed via the `gh` CLI. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 

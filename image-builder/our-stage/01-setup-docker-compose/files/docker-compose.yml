@@ -14,7 +14,7 @@ services:
       retries: 5
 
   opensearch:
-    image: ghcr.io/paradisec-archive/opensearch
+    image: ghcr.io/crate-works/opensearch
     restart: unless-stopped
     volumes:
       - opensearch_data:/usr/share/opensearch/data
@@ -27,7 +27,7 @@ services:
       start_period: 120s
 
   raspbocapi:
-    image: ghcr.io/paradisec-archive/raspbocapi
+    image: ghcr.io/crate-works/raspbocapi
     restart: unless-stopped
     depends_on:
       mysql:
@@ -50,7 +50,7 @@ services:
       - crate_data:/data
 
   raspbocrate:
-    image: ghcr.io/paradisec-archive/raspbocrate
+    image: ghcr.io/crate-works/raspbocrate
     restart: unless-stopped
     depends_on:
       mysql:
