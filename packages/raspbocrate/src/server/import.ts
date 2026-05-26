@@ -266,7 +266,7 @@ const processEntity = async (
 
       const indexData = entity.indexData;
       const doc: EntityDocument = {
-        rocrateId: entityId,
+        id: entityId,
         name: entity.name,
         description: entity.description || '',
         entityType: entityData.entityType,
@@ -422,7 +422,7 @@ const processFile = async (
     // Index file entity into OpenSearch
     try {
       const doc: EntityDocument = {
-        rocrateId: file.id,
+        id: file.id,
         name: file.name,
         description: '',
         entityType: 'http://schema.org/MediaObject',

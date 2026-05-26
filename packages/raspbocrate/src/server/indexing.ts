@@ -3,7 +3,7 @@ import { opensearch } from '#/opensearch.ts';
 export const INDEX_NAME = 'entities';
 
 export type EntityDocument = {
-  rocrateId: string;
+  id: string;
   name: string;
   description: string;
   entityType: string;
@@ -26,7 +26,7 @@ const TEXT_WITH_KEYWORD = {
 
 const INDEX_MAPPINGS = {
   properties: {
-    rocrateId: TEXT_WITH_KEYWORD,
+    id: TEXT_WITH_KEYWORD,
     name: TEXT_WITH_KEYWORD,
     description: { type: 'text' as const },
     entityType: TEXT_WITH_KEYWORD,
@@ -67,7 +67,7 @@ export const indexEntityDocument = async (
 ): Promise<void> => {
   await opensearch.index({
     index: INDEX_NAME,
-    id: doc.rocrateId,
+    id: doc.id,
     body: doc,
   });
 };
