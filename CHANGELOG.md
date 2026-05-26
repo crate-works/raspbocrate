@@ -1,3 +1,15 @@
+# [1.9.0](https://github.com/paradisec-archive/raspbocrate/compare/v1.8.0...v1.9.0) (2026-05-26)
+
+
+### Bug Fixes
+
+* redo migration for new table names ([55d22bb](https://github.com/paradisec-archive/raspbocrate/commit/55d22bb4880cb8e4b8cdc1af188569ca8426ae90))
+
+
+### Features
+
+* skip dot files and accept prefixed metadata when importing ([a19b901](https://github.com/paradisec-archive/raspbocrate/commit/a19b9010ecc962b78196d3a3b3e8da948f06da44))
+
 # [1.8.0](https://github.com/paradisec-archive/raspbocrate/compare/v1.7.1...v1.8.0) (2026-05-06)
 
 
