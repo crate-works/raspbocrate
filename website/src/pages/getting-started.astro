@@ -32,6 +32,50 @@ import Layout from '../layouts/Layout.astro';
           <li><strong>Computer</strong> with an SD card reader for flashing the image</li>
         </ul>
 
+        <h2 id="prepare-your-ro-crate-data">Prepare your RO-Crate data</h2>
+        <p>
+          RaspboCrate imports RO-Crate data from a USB drive. The drive must have a top-level
+          <code>catalog</code> directory — this is how RaspboCrate recognises it as a data drive.
+        </p>
+        <p>
+          Inside <code>catalog/</code>, each collection lives in its own folder containing an
+          <code>ro-crate-metadata.json</code> (the collection-level crate). Each item belonging
+          to that collection lives in a subfolder, with its own
+          <code>ro-crate-metadata.json</code> (the item-level crate) alongside the item's files
+          (audio, video, images, transcripts, and so on).
+        </p>
+        <pre><code>USB drive
+└── catalog/
+    ├── MW6/
+    │   ├── ro-crate-metadata.json          ← collection-level
+    │   ├── MW6-001/
+    │   │   ├── ro-crate-metadata.json      ← item-level
+    │   │   ├── MW6-001-A.mp3
+    │   │   └── MW6-001-A.eaf
+    │   └── MW6-002/
+    │       ├── ro-crate-metadata.json
+    │       └── ...
+    └── DWU/
+        ├── ro-crate-metadata.json
+        └── PEK2/
+            └── ro-crate-metadata.json</code></pre>
+        <p>A few practical notes about the layout:</p>
+        <ul>
+          <li>The metadata filename may be the plain <code>ro-crate-metadata.json</code> or a
+            prefixed form like <code>MW6-ro-crate-metadata.json</code> — both are recognised.</li>
+          <li>The difference between a collection-level crate and an item-level crate is
+            encoded in the metadata itself (its <code>@type</code> and <code>conformsTo</code>
+            profile), not the folder name. The folder layout above is the convention
+            RaspboCrate expects.</li>
+          <li>Dot files and dot directories (for example macOS
+            <code>.Spotlight-V100</code> or <code>.Trashes</code>) are ignored, so you don't
+            need to scrub them off the drive.</li>
+        </ul>
+        <p>
+          For users of the CrateWorks downloader, this is the shape of the data you end up with after exporting
+          and unzipping selected items onto a USB drive.
+        </p>
+
         <h2>Step 1: Download the image</h2>
         <p>
           Download the latest RaspboCrate image from the
@@ -41,32 +85,29 @@ import Layout from '../layouts/Layout.astro';
             rel="noopener noreferrer"
           >
             GitHub Releases
-          </a> page.
-        </p>
-        <p>
-          Choose <strong>Raspberry Pi Image</strong>.
+          </a> page. Choose the <strong>Raspberry Pi Image</strong> asset (a
+          <code>.img.xz</code> file). Leave it compressed — do not unzip it; Raspberry Pi
+          Imager reads <code>.img.xz</code> directly.
         </p>
 
         <h2>Step 2: Write the image</h2>
-        <p>Use one of these tools to write the image to your SD card:</p>
-        <ul>
-          <li>
-            <a href="https://www.raspberrypi.com/software/" target="_blank" rel="noopener noreferrer">
-              Raspberry Pi Imager
-            </a> (recommended)
-          </li>
-          <li>
-            <a href="https://etcher.balena.io/" target="_blank" rel="noopener noreferrer">
-              balenaEtcher
-            </a>
-          </li>
-        </ul>
+        <p>
+          Write the image to your SD card using
+          <a href="https://www.raspberrypi.com/software/" target="_blank" rel="noopener noreferrer">
+            Raspberry Pi Imager
+          </a>.
+        </p>
         <ol>
           <li>Insert your SD card into your computer</li>
-          <li>Open your chosen imaging tool</li>
-          <li>Select the downloaded RaspboCrate image</li>
+          <li>Open Raspberry Pi Imager</li>
+          <li>Select your Raspberry Pi device (for example, Raspberry Pi 4)</li>
+          <li>For the operating system, scroll to the bottom of the list and choose
+            <strong>Use Custom</strong>, then browse to the image you downloaded (e.g.
+            <code>raspbocrate-v1.9.0.img.xz</code>)</li>
           <li>Select your SD card as the target</li>
-          <li>Click "Write" or "Flash" and wait for the process to complete</li>
+          <li>Click <strong>Write</strong> and confirm when warned that the SD card will be
+            erased. You may be prompted for your password to authorise the write.</li>
+          <li>Wait for the writing and verification steps to finish, then eject the card</li>
         </ol>
 
         <h2>Step 3: First boot</h2>
@@ -85,16 +126,24 @@ import Layout from '../layouts/Layout.astro';
           If <code>raspbocrate.local</code> doesn't resolve, you may need to find the Pi's IP
           address from your router and use that instead.
         </p>
+        <p>
+          On MacOS X, Chrome may fail to reach <code>.local</code> addresses. If that happens, try Safari or another browser.
+          Or configure Chrome to be able to access the local network (Search "chrome allow .local access" for instructions).
+        </p>
 
         <h2>Importing data from USB</h2>
-        <p>RaspboCrate makes it easy to import collections from USB drives:</p>
+        <p>
+          With a USB drive prepared as described in
+          <a href="#prepare-your-ro-crate-data">Prepare your RO-Crate data</a>, importing is
+          straightforward:
+        </p>
         <ol>
-          <li>Prepare your RO-Crate data on a USB drive (it must have all the files in a catalog directory)</li>
           <li>Insert the USB drive into the Raspberry Pi</li>
           <li>Open the admin interface</li>
           <li>Navigate to the "Import" section</li>
           <li>Select the USB drive and the collections to import</li>
           <li>Click "Import" and wait for the process to complete</li>
+          <li>The admin interface shows a notification when the import has finished</li>
         </ol>
 
         <h2>Browsing catalogues</h2>
