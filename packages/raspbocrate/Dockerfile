@@ -36,6 +36,7 @@ COPY --from=deps /app/node_modules ./node_modules
 
 WORKDIR /app/packages/raspbocrate
 
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY --from=deps /app/packages/raspbocrate/node_modules ./node_modules
 
 # Copy source files
