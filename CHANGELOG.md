@@ -1,3 +1,10 @@
+## [1.9.1](https://github.com/crate-works/raspbocrate/compare/v1.9.0...v1.9.1) (2026-05-27)
+
+
+### Bug Fixes
+
+* indexing for new schema ([9a4e119](https://github.com/crate-works/raspbocrate/commit/9a4e1197364670931dbb2c178de1b067c1fb32f2))
+
 # [1.9.0](https://github.com/paradisec-archive/raspbocrate/compare/v1.8.0...v1.9.0) (2026-05-26)
 
 
