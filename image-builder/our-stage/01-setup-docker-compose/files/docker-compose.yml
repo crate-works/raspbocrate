@@ -70,7 +70,7 @@ services:
       - crate_data:/data
 
   oni-ui:
-    image: ghcr.io/language-research-technology/oni-ui:new-api
+    image: ghcr.io/crate-works/oni:latest
     restart: unless-stopped
     volumes:
       - /opt/raspbocrate/oni-ui.json:/configuration.json

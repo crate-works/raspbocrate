@@ -260,6 +260,9 @@
       "countries": "Country",
       "text": "Text"
     },
+    "features": {
+      "disableMaps": true
+    },
     "mapConfig": {
       "boundingBox": {
         "topRight": {
