@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/crate-works/raspbocrate/compare/v1.9.1...v1.10.0) (2026-06-29)
+
+
+### Features
+
+* **oni-ui:** disable maps for offline deployments ([00f1503](https://github.com/crate-works/raspbocrate/commit/00f1503a1d73468ff256b978c4fad105287789b4))
+
 ## [1.9.1](https://github.com/crate-works/raspbocrate/compare/v1.9.0...v1.9.1) (2026-05-27)
 
 
