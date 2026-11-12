@@ -37,7 +37,7 @@
     "clsx": "^2.1.1",
     "dotenv": "^17.4.2",
     "lucide-react": "^1.16.0",
-    "nitro": "latest",
+    "nitro": "3.0.260522-beta",
     "prisma": "^7.8.0",
     "radix-ui": "^1.4.3",
     "react": "^19.2.6",
