@@ -1,3 +1,13 @@
+## [1.10.1](https://github.com/crate-works/raspbocrate/compare/v1.10.0...v1.10.1) (2026-11-12)
+
+
+### Bug Fixes
+
+* **docker:** run images on the current Node.js LTS ([6c359f9](https://github.com/crate-works/raspbocrate/commit/6c359f965be309a12dfc4d7eda02a8b244320158))
+* **image-builder:** rebase pi-gen patch on upstream ([fee48ee](https://github.com/crate-works/raspbocrate/commit/fee48ee9b12d52c6970d8310321925074436f343)), closes [RPI-Distro/pi-gen#933](https://github.com/RPI-Distro/pi-gen/issues/933)
+* **oni-ui:** update configs for the current ONI schema ([9afd297](https://github.com/crate-works/raspbocrate/commit/9afd297e0139d531bb5c0337c4eef964ac2e623f))
+* **pi:** serve the API through nginx at /api ([defb086](https://github.com/crate-works/raspbocrate/commit/defb08629f80176aa8be85afbb235f4e887ed452))
+
 # [1.10.0](https://github.com/crate-works/raspbocrate/compare/v1.9.1...v1.10.0) (2026-06-29)
 
 
