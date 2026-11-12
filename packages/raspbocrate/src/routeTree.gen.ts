@@ -9,18 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as DrivesRouteImport } from './routes/drives'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DrivesRouteImport } from './routes/drives'
 import { Route as DriveDriveNameRouteImport } from './routes/drive.$driveName'
 
-const DrivesRoute = DrivesRouteImport.update({
-  id: '/drives',
-  path: '/drives',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DrivesRoute = DrivesRouteImport.update({
+  id: '/drives',
+  path: '/drives',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DriveDriveNameRoute = DriveDriveNameRouteImport.update({
@@ -61,18 +61,18 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/drives': {
-      id: '/drives'
-      path: '/drives'
-      fullPath: '/drives'
-      preLoaderRoute: typeof DrivesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/drives': {
+      id: '/drives'
+      path: '/drives'
+      fullPath: '/drives'
+      preLoaderRoute: typeof DrivesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/drive/$driveName': {
