@@ -288,7 +288,7 @@
   },
   "api": {
     "rocrate": {
-      "endpoint": "http://raspbocrate.local:3000"
+      "endpoint": "/api"
     }
   }
 }

@@ -43,8 +43,6 @@ services:
       DATABASE_HOST: mysql
       DATABASE_PORT: 3306
       OPENSEARCH_URL: http://opensearch:9200
-    ports:
-      - "3000:4000"
     volumes:
       - /media:/media:rslave
       - crate_data:/data
@@ -98,6 +96,7 @@ services:
     depends_on:
       - oni-ui
       - raspbocrate
+      - raspbocapi
       - dozzle
 
 volumes:
