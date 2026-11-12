@@ -1,14 +1,15 @@
 ################
 # Setup pnpm cache
 ################
-FROM node:22-slim AS base
+FROM node:lts-slim AS base
 
 # Cache pnpm store
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
-# Enable corepack for pnpm
-RUN corepack enable
+# Install the pnpm version pinned in packageManager
+RUN --mount=type=bind,source=package.json,target=/tmp/package.json \
+  npm install -g "$(node -p "require('/tmp/package.json').packageManager.split('+')[0]")"
 
 ################
 # Install dependencies
@@ -55,7 +56,7 @@ RUN pnpm exec prisma generate
 ################
 # Build the application
 ################
-FROM node:22-slim AS prod
+FROM node:lts-slim AS prod
 
 # Create non-root user for security
 RUN addgroup --system --gid 1001 app && \
