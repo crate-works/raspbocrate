@@ -348,7 +348,7 @@ const GetDriveContentsSchema = z.object({
 });
 
 export const getServerDriveContents = createServerFn({ method: 'GET' })
-  .inputValidator(GetDriveContentsSchema)
+  .validator(GetDriveContentsSchema)
   .handler(async ({ data: { drivePath } }) => {
     try {
       // Verify the path exists and is a directory

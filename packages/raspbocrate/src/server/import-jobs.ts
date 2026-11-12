@@ -78,7 +78,7 @@ const StartImportSchema = z.object({
 });
 
 export const startImport = createServerFn({ method: 'POST' })
-  .inputValidator(StartImportSchema)
+  .validator(StartImportSchema)
   .handler(({ data: { drivePath } }): { jobId: string } => {
     if (currentJob && !isTerminalPhase(currentJob.phase)) {
       if (currentJob.drivePath === drivePath) {
@@ -111,7 +111,7 @@ const GetImportStatusSchema = z.object({
 });
 
 export const getImportStatus = createServerFn({ method: 'GET' })
-  .inputValidator(GetImportStatusSchema)
+  .validator(GetImportStatusSchema)
   .handler(({ data: { jobId } }): GetImportStatusResult => {
     if (!currentJob || currentJob.jobId !== jobId) {
       return { jobId, phase: 'lost' };
