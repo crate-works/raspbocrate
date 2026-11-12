@@ -38,7 +38,7 @@
     "dotenv": "^18.0.10",
     "lucide-react": "^1.71.0",
     "nitro": "3.0.261103-rc",
-    "prisma": "^8.0.0-rc.33",
+    "prisma": "^7.10.1",
     "radix-ui": "^1.8.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
