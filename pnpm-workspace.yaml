@@ -18,3 +18,15 @@ allowBuilds:
   esbuild: true
   # Preinstall checks the Node/environment is supported by Prisma.
   prisma: true
+
+permissions:
+  "@tanstack/devtools-vite":
+    skills: true
+  "@tanstack/react-router":
+    skills: [router-query, migrate-from-react-router, react-router]
+  "@tanstack/react-start":
+    skills: [react-start]
+
+skills:
+  dirs:
+    - .claude/skills
