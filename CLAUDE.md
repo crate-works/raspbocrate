@@ -16,6 +16,7 @@ RaspboCrate is a Raspberry Pi-based system for managing RO-Crate (Research Objec
 - `image-builder/` - Raspberry Pi image builder using pi-gen
 
 **Key Technologies:**
+
 - Frontend: React 19, TanStack Router/Query, Tailwind CSS, shadcn/ui
 - Backend: Fastify, arocapi, Prisma with MariaDB adapter
 - Search: OpenSearch
@@ -24,6 +25,7 @@ RaspboCrate is a Raspberry Pi-based system for managing RO-Crate (Research Objec
 ## Development Commands
 
 ### Root (from project root)
+
 ```bash
 pnpm install              # Install all dependencies
 pnpm lint:biome           # Lint and format check entire project
@@ -31,6 +33,7 @@ docker compose up -d      # Start MySQL, OpenSearch, ONI-UI services
 ```
 
 ### Admin Interface (packages/raspbocrate)
+
 ```bash
 pnpm dev                  # Start dev server on port 3000
 pnpm build                # Build for production
@@ -43,18 +46,21 @@ pnpm db:seed              # Seed database
 ```
 
 ### API Server (packages/raspbocapi)
+
 ```bash
 pnpm dev                  # Start with --watch on port 4000
 pnpm start                # Start production server
 ```
 
 ### Website (website)
+
 ```bash
 pnpm dev                  # Start Astro dev server
 pnpm build                # Build static site
 ```
 
 ### Docker
+
 ```bash
 pnpm docker:raspbocrate   # Build admin interface image
 pnpm docker:raspbocapi    # Build API image

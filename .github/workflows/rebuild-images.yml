@@ -5,7 +5,7 @@ name: Rebuild images
 
 on:
   schedule:
-    - cron: '0 18 * * 0' # Monday 04:00 AEST
+    - cron: "0 18 * * 0" # Monday 04:00 AEST
   workflow_dispatch:
 
 permissions:
