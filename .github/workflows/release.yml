@@ -46,7 +46,7 @@ jobs:
       - name: Run semantic-release dry run
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm dlx semantic-release --dry-run
+        run: pnpm exec semantic-release --dry-run
 
       - name: Determine next version
         id: version
@@ -320,4 +320,4 @@ jobs:
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm dlx semantic-release
+        run: pnpm exec semantic-release
