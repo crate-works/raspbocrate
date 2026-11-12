@@ -40,7 +40,7 @@ cp -ar our-stage pi-gen
 # Remove stage2 export so we don't build the lite image
 rm -f pi-gen/stage2/EXPORT_IMAGE pi-gen/stage2/EXPORT_NOOBS
 
-# Apply our patches to pi-gen (qemu fixes + skopeo)
+# Add skopeo to the pi-gen build container
 git -C pi-gen apply ../pi-gen-fixes.patch
 
 if [ "$CI_MODE" = true ]; then

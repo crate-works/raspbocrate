@@ -1,13 +1,24 @@
+pi-gen-fixes.patch: applied by bin/build-image to a fresh clone of upstream
+pi-gen (arm64 branch). git apply ignores this text before the first diff.
+
+Adds skopeo to the pi-gen build container. Our stage
+(our-stage/01-setup-docker-compose/00-run.sh) uses `skopeo copy` to pre-pull
+the app's Docker images into the rootfs, so the Pi boots with them
+without network access.
+
+If upstream changes this line and the patch stops applying, regenerate it
+against a fresh clone of the arm64 branch.
+
 diff --git i/Dockerfile w/Dockerfile
-index f17077c..61da683 100644
+index 29a8c8f..7bfa223 100644
 --- i/Dockerfile
 +++ w/Dockerfile
 @@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
  RUN apt-get -y update && \
      apt-get -y install --no-install-recommends \
          git vim parted \
--        quilt coreutils qemu-user-static debootstrap zerofree zip dosfstools e2fsprogs\
-+        quilt coreutils qemu-user-binfmt debootstrap zerofree zip dosfstools e2fsprogs skopeo\
-         libarchive-tools libcap2-bin rsync grep udev xz-utils curl xxd file kmod bc \
-         binfmt-support ca-certificates fdisk gpg pigz arch-test \
+-        quilt coreutils qemu-user debootstrap zerofree zip dosfstools e2fsprogs\
++        quilt coreutils qemu-user debootstrap zerofree zip dosfstools e2fsprogs skopeo\
+         libcap2-bin rsync grep udev xz-utils curl xxd file kmod bc \
+         ca-certificates fdisk gpg pigz arch-test \
      && rm -rf /var/lib/apt/lists/*
