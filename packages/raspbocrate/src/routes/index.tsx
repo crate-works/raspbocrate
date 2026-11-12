@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { queryOptions, useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn, useServerFn } from '@tanstack/react-start';
 import {
@@ -34,6 +34,11 @@ const fetchDataStats = createServerFn({ method: 'GET' }).handler(async () => {
   return await getDataStats();
 });
 
+const dataStatsQueryOptions = queryOptions({
+  queryKey: ['data-stats'],
+  queryFn: () => fetchDataStats(),
+});
+
 const resetData = createServerFn({ method: 'POST' }).handler(async () => {
   return await resetAllData();
 });
@@ -52,12 +57,8 @@ const formatEntityType = (entityType: string): string => {
 const HomePage = () => {
   const [resetStatus, setResetStatus] = useState<ResetStatus | null>(null);
   const doReset = useServerFn(resetData);
-  const getStats = useServerFn(fetchDataStats);
 
-  const statsQuery = useQuery({
-    queryKey: ['data-stats'],
-    queryFn: () => getStats(),
-  });
+  const statsQuery = useQuery(dataStatsQueryOptions);
 
   const resetMutation = useMutation({
     mutationKey: ['reset-data'],
@@ -293,4 +294,7 @@ const HomePage = () => {
   );
 };
 
-export const Route = createFileRoute('/')({ component: HomePage });
+export const Route = createFileRoute('/')({
+  loader: ({ context }) => context.queryClient.query(dataStatsQueryOptions),
+  component: HomePage,
+});

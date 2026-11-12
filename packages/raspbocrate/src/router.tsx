@@ -11,6 +11,8 @@ export const getRouter = () => {
     routeTree,
     context: { ...rqContext },
     defaultPreload: 'intent',
+    // Query owns caching, so always run loaders and let it decide whether to fetch.
+    defaultPreloadStaleTime: 0,
     defaultErrorComponent: ({ error }) => <ErrorComponent error={error} />,
   });
 
