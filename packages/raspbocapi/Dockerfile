@@ -1,14 +1,14 @@
 ################
 # Setup pnpm cache
 ################
-FROM node:22-slim AS base
+FROM node:lts-slim AS base
 
 # Cache pnpm store
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
-# Enable corepack for pnpm
-RUN corepack enable
+# pnpm switches itself to the packageManager version
+RUN npm install -g pnpm
 
 ################
 # Install dependencies
@@ -31,12 +31,13 @@ FROM base AS builder
 
 WORKDIR /app
 
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+
 # Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 
 WORKDIR /app/packages/raspbocapi
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY --from=deps /app/packages/raspbocapi/node_modules ./node_modules
 
 # Copy source files
@@ -55,7 +56,7 @@ RUN pnpm exec prisma generate
 ################
 # Build the application
 ################
-FROM node:22-slim AS prod
+FROM node:lts-slim AS prod
 
 # Create non-root user for security
 RUN addgroup --system --gid 1001 app && \

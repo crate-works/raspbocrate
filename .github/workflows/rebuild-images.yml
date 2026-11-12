@@ -1,0 +1,93 @@
+name: Rebuild images
+
+# Rebuilds the latest release's images so base image security fixes
+# (Node.js, Debian, Ubuntu) ship without waiting for a new release.
+
+on:
+  schedule:
+    - cron: '0 18 * * 0' # Monday 04:00 AEST
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  latest-release:
+    name: Find latest release
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.release.outputs.tag }}
+    steps:
+      - name: Get latest release tag
+        id: release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          TAG=$(gh release view --json tagName --jq .tagName)
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "Latest release: ${TAG}"
+
+  build:
+    name: Rebuild ${{ matrix.image }}
+    needs: latest-release
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: raspbocrate
+            context: .
+            file: packages/raspbocrate/Dockerfile
+          - image: raspbocapi
+            context: .
+            file: packages/raspbocapi/Dockerfile
+          - image: opensearch
+            context: packages/opensearch
+            file: packages/opensearch/Dockerfile
+    steps:
+      - name: Checkout release
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.latest-release.outputs.tag }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine tags
+        id: tags
+        env:
+          TAG: ${{ needs.latest-release.outputs.tag }}
+          IMAGE: ghcr.io/crate-works/${{ matrix.image }}
+        run: |
+          VERSION="${TAG#v}"
+          MAJOR_MINOR="${VERSION%.*}"
+
+          TAGS="${IMAGE}:${VERSION}"
+          TAGS="${TAGS},${IMAGE}:${MAJOR_MINOR}"
+          TAGS="${TAGS},${IMAGE}:latest"
+
+          echo "tags=${TAGS}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v7
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.file }}
+          platforms: linux/arm64
+          pull: true
+          push: true
+          tags: ${{ steps.tags.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
