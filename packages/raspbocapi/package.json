@@ -7,21 +7,22 @@
     "test": "test"
   },
   "dependencies": {
-    "@opensearch-project/opensearch": "^3.6.0",
-    "@prisma/adapter-mariadb": "^7.8.0",
-    "@prisma/client": "^7.8.0",
+    "@opensearch-project/opensearch": "^3.10.0",
+    "@prisma/adapter-mariadb": "^7.10.1",
+    "@prisma/client": "^7.10.1",
     "arocapi": "^4.0.1",
-    "fastify": "^5.8.5"
+    "fastify": "^5.12.8"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
-    "prisma": "^7.8.0",
-    "typescript": "^6.0.3"
+    "prisma": "^7.10.1",
+    "typescript": "^7.0.2"
   },
   "scripts": {
     "start": "node --env-file=.env app.ts",
     "dev": "node --env-file=.env --watch app.ts",
     "lint:types": "tsc --noEmit",
+    "db:generate": "prisma generate",
     "prisma": "pnpm dlx dotenv-cli -f .env -- prisma"
   },
   "keywords": [],

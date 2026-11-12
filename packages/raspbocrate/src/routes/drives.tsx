@@ -1,20 +1,10 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import { useServerFn } from '@tanstack/react-start';
 import { DrivesList } from '#/components/DrivesList.tsx';
-import { getServerDrives } from '#/server/drives.ts';
-
-const useDrives = () => {
-  const getDrives = useServerFn(getServerDrives);
-
-  return useSuspenseQuery({
-    queryKey: ['drives'],
-    queryFn: () => getDrives(),
-  });
-};
+import { drivesQueryOptions } from '#/queries.ts';
 
 const DrivesPage = () => {
-  const { data: drives } = useDrives();
+  const { data: drives } = useSuspenseQuery(drivesQueryOptions);
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-6">
@@ -30,5 +20,6 @@ const DrivesPage = () => {
 };
 
 export const Route = createFileRoute('/drives')({
+  loader: ({ context }) => context.queryClient.query(drivesQueryOptions),
   component: DrivesPage,
 });

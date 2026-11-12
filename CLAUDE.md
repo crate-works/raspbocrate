@@ -16,6 +16,7 @@ RaspboCrate is a Raspberry Pi-based system for managing RO-Crate (Research Objec
 - `image-builder/` - Raspberry Pi image builder using pi-gen
 
 **Key Technologies:**
+
 - Frontend: React 19, TanStack Router/Query, Tailwind CSS, shadcn/ui
 - Backend: Fastify, arocapi, Prisma with MariaDB adapter
 - Search: OpenSearch
@@ -24,17 +25,20 @@ RaspboCrate is a Raspberry Pi-based system for managing RO-Crate (Research Objec
 ## Development Commands
 
 ### Root (from project root)
+
 ```bash
 pnpm install              # Install all dependencies
 pnpm lint:biome           # Lint and format check entire project
+pnpm lint:types           # Type check both packages
+pnpm lint:knip            # Dead code and circular import check
 docker compose up -d      # Start MySQL, OpenSearch, ONI-UI services
 ```
 
 ### Admin Interface (packages/raspbocrate)
+
 ```bash
 pnpm dev                  # Start dev server on port 3000
 pnpm build                # Build for production
-pnpm test                 # Run Vitest tests
 pnpm db:generate          # Generate Prisma client
 pnpm db:push              # Push schema to database
 pnpm db:migrate           # Run database migrations
@@ -43,18 +47,22 @@ pnpm db:seed              # Seed database
 ```
 
 ### API Server (packages/raspbocapi)
+
 ```bash
 pnpm dev                  # Start with --watch on port 4000
 pnpm start                # Start production server
+pnpm db:generate          # Generate Prisma client
 ```
 
 ### Website (website)
+
 ```bash
 pnpm dev                  # Start Astro dev server
 pnpm build                # Build static site
 ```
 
 ### Docker
+
 ```bash
 pnpm docker:raspbocrate   # Build admin interface image
 pnpm docker:raspbocapi    # Build API image
@@ -62,14 +70,16 @@ pnpm docker:raspbocapi    # Build API image
 
 ## Code Style
 
-- Uses Biome for linting and formatting (single quotes, space indentation)
+- Uses Biome for linting and formatting, including Markdown and YAML (single quotes in JS/TS, space indentation)
 - shadcn/ui components in `packages/raspbocrate/src/components/ui/` are excluded from linting
-- Generated route files (`routeTree.gen.ts`) are excluded from linting
+- Generated files (`routeTree.gen.ts`, `CHANGELOG.md`) are excluded from linting
+- There are no tests yet; CI (`.github/workflows/lint.yml`) runs `lint:biome`, `lint:types` and `lint:knip`
+- The type check needs generated Prisma clients: run `pnpm db:generate` in each package first
 - Astro files have relaxed lint rules due to incomplete Biome support
 
 ## Database
 
-Both packages use Prisma with the MariaDB adapter. Environment variables are loaded from `.env.local` files via dotenv-cli.
+Both packages use Prisma with the MariaDB adapter. Each package reads its environment from its own `.env`: raspbocapi via `node --env-file=.env`, raspbocrate's Prisma CLI via `dotenv/config` in `prisma.config.ts`.
 
 ## Services (docker-compose.yml)
 

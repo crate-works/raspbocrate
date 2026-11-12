@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { queryOptions, useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn, useServerFn } from '@tanstack/react-start';
 import {
@@ -6,10 +6,10 @@ import {
   Database,
   FileText,
   HardDrive,
-  Loader2,
+  LoaderCircle,
   Search,
   Server,
-  Trash2,
+  Trash,
 } from 'lucide-react';
 import { useState } from 'react';
 import {
@@ -24,10 +24,19 @@ import {
   AlertDialogTrigger,
 } from '#/components/ui/alert-dialog.tsx';
 import { Button } from '#/components/ui/button.tsx';
-import { getDataStats, type ResetResult, resetAllData } from '#/server/reset.ts';
+import {
+  getDataStats,
+  type ResetResult,
+  resetAllData,
+} from '#/server/reset.ts';
 
 const fetchDataStats = createServerFn({ method: 'GET' }).handler(async () => {
   return await getDataStats();
+});
+
+const dataStatsQueryOptions = queryOptions({
+  queryKey: ['data-stats'],
+  queryFn: () => fetchDataStats(),
 });
 
 const resetData = createServerFn({ method: 'POST' }).handler(async () => {
@@ -48,12 +57,8 @@ const formatEntityType = (entityType: string): string => {
 const HomePage = () => {
   const [resetStatus, setResetStatus] = useState<ResetStatus | null>(null);
   const doReset = useServerFn(resetData);
-  const getStats = useServerFn(fetchDataStats);
 
-  const statsQuery = useQuery({
-    queryKey: ['data-stats'],
-    queryFn: () => getStats(),
-  });
+  const statsQuery = useQuery(dataStatsQueryOptions);
 
   const resetMutation = useMutation({
     mutationKey: ['reset-data'],
@@ -243,12 +248,12 @@ const HomePage = () => {
               <Button variant="destructive" disabled={resetMutation.isPending}>
                 {resetMutation.isPending ? (
                   <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <LoaderCircle className="h-4 w-4 mr-2 animate-spin" />
                     Resetting...
                   </>
                 ) : (
                   <>
-                    <Trash2 className="h-4 w-4 mr-2" />
+                    <Trash className="h-4 w-4 mr-2" />
                     Reset Data
                   </>
                 )}
@@ -289,4 +294,7 @@ const HomePage = () => {
   );
 };
 
-export const Route = createFileRoute('/')({ component: HomePage });
+export const Route = createFileRoute('/')({
+  loader: ({ context }) => context.queryClient.query(dataStatsQueryOptions),
+  component: HomePage,
+});

@@ -33,6 +33,17 @@ const fastify = Fastify({
   logger: true,
 });
 
+fastify.addHook('onClose', async () => {
+  await Promise.all([prisma.$disconnect(), opensearch.close()]);
+});
+
+for (const signal of ['SIGINT', 'SIGTERM'] as const) {
+  process.once(signal, async () => {
+    fastify.log.info(`${signal} received, shutting down`);
+    await fastify.close();
+  });
+}
+
 const entityTransformers: EntityTransformer[] = [
   async (entity) => {
     const objectCount = entity.memberOf

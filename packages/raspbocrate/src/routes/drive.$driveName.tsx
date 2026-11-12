@@ -1,49 +1,28 @@
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useServerFn } from '@tanstack/react-start';
-import { ArrowLeft, HardDrive, Import, Loader2 } from 'lucide-react';
+import { ArrowLeft, HardDrive, Import, LoaderCircle } from 'lucide-react';
 import { CrateTreeList } from '#/components/CrateTree.tsx';
 import { Button } from '#/components/ui/button.tsx';
-import { getServerDrives } from '#/server/drives.ts';
+import {
+  activeImportQueryOptions,
+  driveContentsQueryOptions,
+  drivesQueryOptions,
+} from '#/queries.ts';
 import type { ImportStats } from '#/server/import.ts';
 import {
   type GetImportStatusResult,
-  getActiveImport,
   getImportStatus,
   isTerminalPhase,
   startImport,
 } from '#/server/import-jobs.ts';
-import { getServerDriveContents } from '#/server/rocrate.ts';
 import type { Drive } from '#/types/usb.ts';
 
-const useDriveContents = (mountpoint: string) => {
-  const getDriveContents = useServerFn(getServerDriveContents);
-
-  return useSuspenseQuery({
-    queryKey: ['drive-contents', mountpoint],
-    queryFn: () => getDriveContents({ data: { drivePath: mountpoint } }),
-  });
-};
-
-const useDriveInfo = (driveName: string) => {
-  const getDrives = useServerFn(getServerDrives);
-
-  return useSuspenseQuery({
-    queryKey: ['drives'],
-    queryFn: () => getDrives(),
+const useDriveInfo = (driveName: string) =>
+  useSuspenseQuery({
+    ...drivesQueryOptions,
     select: (drives) => drives.find((d) => d.name === driveName),
   });
-};
-
-const useActiveImport = () => {
-  const fetchActive = useServerFn(getActiveImport);
-
-  return useSuspenseQuery({
-    queryKey: ['active-import'],
-    queryFn: () => fetchActive(),
-    staleTime: 0,
-  });
-};
 
 const useStartImport = () => {
   const start = useServerFn(startImport);
@@ -98,8 +77,10 @@ type DriveDetailContentProps = {
 };
 
 const DriveDetailContent = ({ drive }: DriveDetailContentProps) => {
-  const { data: contents } = useDriveContents(drive.mountpoint);
-  const { data: activeJob } = useActiveImport();
+  const { data: contents } = useSuspenseQuery(
+    driveContentsQueryOptions(drive.mountpoint),
+  );
+  const { data: activeJob } = useSuspenseQuery(activeImportQueryOptions);
   const startMutation = useStartImport();
 
   const localJobId = startMutation.data?.jobId ?? null;
@@ -148,7 +129,7 @@ const DriveDetailContent = ({ drive }: DriveDetailContentProps) => {
         >
           {isImporting || startMutation.isPending ? (
             <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <LoaderCircle className="h-4 w-4 mr-2 animate-spin" />
               Importing...
             </>
           ) : (
@@ -333,5 +314,14 @@ const ErrorPanel = ({ message, errors }: ErrorPanelProps) => (
 );
 
 export const Route = createFileRoute('/drive/$driveName')({
+  loader: async ({ context: { queryClient }, params }) => {
+    const drives = await queryClient.query(drivesQueryOptions);
+    const drive = drives.find((d) => d.name === params.driveName);
+
+    await Promise.all([
+      queryClient.query(activeImportQueryOptions),
+      drive && queryClient.query(driveContentsQueryOptions(drive.mountpoint)),
+    ]);
+  },
   component: DriveDetailPage,
 });

@@ -1,13 +1,32 @@
+update:
+  githubActions: true
+
+autoDedupe: true
+saveTypes: true
+
+lockfile:
+  includeResolutionSettings: true
+
 packages:
   - packages/*
   - website
 
-# Supply chain security
-# https://pnpm.io/supply-chain-security
-minimumReleaseAge: 4320 # 3 days, tighter than v11 default of 1440 (1 day)
-
 allowBuilds:
+  # Downloads the Prisma schema engine binary used by migrate/db push.
   "@prisma/engines": true
+  # Downloads its platform binary; Vite and Astro bundle with it.
   esbuild: true
+  # Preinstall checks the Node/environment is supported by Prisma.
   prisma: true
-  sharp: true
+
+permissions:
+  "@tanstack/devtools-vite":
+    skills: true
+  "@tanstack/react-router":
+    skills: [router-query, migrate-from-react-router, react-router]
+  "@tanstack/react-start":
+    skills: [react-start]
+
+skills:
+  dirs:
+    - .claude/skills
