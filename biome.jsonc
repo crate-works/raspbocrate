@@ -10,6 +10,7 @@
     "includes": [
       "**",
       "!.claude",
+      "!CHANGELOG.md",
       "!packages/raspbocrate/src/components/ui",
       "!packages/raspbocrate/src/routeTree.gen.ts"
     ]
