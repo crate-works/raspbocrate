@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useServerFn } from '@tanstack/react-start';
-import { ArrowLeft, HardDrive, Import, Loader2 } from 'lucide-react';
+import { ArrowLeft, HardDrive, Import, LoaderCircle } from 'lucide-react';
 import { CrateTreeList } from '#/components/CrateTree.tsx';
 import { Button } from '#/components/ui/button.tsx';
 import { getServerDrives } from '#/server/drives.ts';
@@ -148,7 +148,7 @@ const DriveDetailContent = ({ drive }: DriveDetailContentProps) => {
         >
           {isImporting || startMutation.isPending ? (
             <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <LoaderCircle className="h-4 w-4 mr-2 animate-spin" />
               Importing...
             </>
           ) : (

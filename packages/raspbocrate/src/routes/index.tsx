@@ -6,10 +6,10 @@ import {
   Database,
   FileText,
   HardDrive,
-  Loader2,
+  LoaderCircle,
   Search,
   Server,
-  Trash2,
+  Trash,
 } from 'lucide-react';
 import { useState } from 'react';
 import {
@@ -247,12 +247,12 @@ const HomePage = () => {
               <Button variant="destructive" disabled={resetMutation.isPending}>
                 {resetMutation.isPending ? (
                   <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <LoaderCircle className="h-4 w-4 mr-2 animate-spin" />
                     Resetting...
                   </>
                 ) : (
                   <>
-                    <Trash2 className="h-4 w-4 mr-2" />
+                    <Trash className="h-4 w-4 mr-2" />
                     Reset Data
                   </>
                 )}

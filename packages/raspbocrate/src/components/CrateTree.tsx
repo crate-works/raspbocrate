@@ -1,11 +1,11 @@
 import {
   ChevronDown,
   ChevronRight,
+  EighthNotes,
   File,
   FileText,
   Folder,
   Image,
-  Music,
   Package,
   Video,
 } from 'lucide-react';
@@ -26,7 +26,7 @@ const getMediaIcon = (encodingFormat?: string) => {
   if (!encodingFormat) return File;
 
   if (encodingFormat.startsWith('image/')) return Image;
-  if (encodingFormat.startsWith('audio/')) return Music;
+  if (encodingFormat.startsWith('audio/')) return EighthNotes;
   if (encodingFormat.startsWith('video/')) return Video;
   if (encodingFormat.startsWith('text/')) return FileText;
 
