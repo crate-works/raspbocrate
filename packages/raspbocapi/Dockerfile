@@ -7,9 +7,8 @@ FROM node:lts-slim AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
-# Install the pnpm version pinned in packageManager
-RUN --mount=type=bind,source=package.json,target=/tmp/package.json \
-  npm install -g "$(node -p "require('/tmp/package.json').packageManager.split('+')[0]")"
+# pnpm switches itself to the packageManager version
+RUN npm install -g pnpm
 
 ################
 # Install dependencies
@@ -32,12 +31,13 @@ FROM base AS builder
 
 WORKDIR /app
 
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+
 # Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 
 WORKDIR /app/packages/raspbocapi
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY --from=deps /app/packages/raspbocapi/node_modules ./node_modules
 
 # Copy source files
