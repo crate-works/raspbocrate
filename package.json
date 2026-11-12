@@ -7,7 +7,7 @@
     "lint:types": "pnpm -r --filter './packages/*' run lint:types",
     "docker:raspbocrate": "docker build -f packages/raspbocrate/Dockerfile -t raspbocrate .",
     "docker:raspbocapi": "docker build -f packages/raspbocapi/Dockerfile -t raspbocapi .",
-    "lint:knip": "DATABASE_URL=mysql://placeholder knip"
+    "lint:knip": "DATABASE_URL=mysql://placeholder knip && DATABASE_URL=mysql://placeholder knip --include cycles"
   },
   "keywords": [],
   "author": "",
