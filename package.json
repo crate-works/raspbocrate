@@ -15,12 +15,12 @@
   "packageManager": "pnpm@12.18.0",
   "devDependencies": {
     "@biomejs/biome": "^2.6.6",
-    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/changelog": "^7.0.0",
     "@semantic-release/exec": "^7.1.0",
-    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/git": "^11.0.1",
     "@types/node": "^26.6.6",
     "knip": "^6.45.0",
     "semantic-release": "^25.0.9",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   }
 }

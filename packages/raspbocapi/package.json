@@ -15,8 +15,8 @@
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
-    "prisma": "^7.10.1",
-    "typescript": "^6.0.3"
+    "prisma": "^8.0.0-rc.33",
+    "typescript": "^7.0.2"
   },
   "scripts": {
     "start": "node --env-file=.env app.ts",
