@@ -1,3 +1,14 @@
+pi-gen-fixes.patch: applied by bin/build-image to a fresh clone of upstream
+pi-gen (arm64 branch). git apply ignores this text before the first diff.
+
+Adds skopeo to the pi-gen build container. Our stage
+(our-stage/01-setup-docker-compose/00-run.sh) uses `skopeo copy` to pre-pull
+the app's Docker images into the rootfs, so the Pi boots with them
+without network access.
+
+If upstream changes this line and the patch stops applying, regenerate it
+against a fresh clone of the arm64 branch.
+
 diff --git i/Dockerfile w/Dockerfile
 index 29a8c8f..7bfa223 100644
 --- i/Dockerfile
