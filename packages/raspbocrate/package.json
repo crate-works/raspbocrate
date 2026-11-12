@@ -10,11 +10,11 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint:types": "tsc --noEmit",
-    "db:generate": "dotenv -e .env.local -- prisma generate",
-    "db:push": "dotenv -e .env.local -- prisma db push",
-    "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
-    "db:studio": "dotenv -e .env.local -- prisma studio",
-    "db:seed": "dotenv -e .env.local -- prisma db seed"
+    "db:generate": "dotenv-cli -e .env.local -- prisma generate",
+    "db:push": "dotenv-cli -e .env.local -- prisma db push",
+    "db:migrate": "dotenv-cli -e .env.local -- prisma migrate dev",
+    "db:studio": "dotenv-cli -e .env.local -- prisma studio",
+    "db:seed": "dotenv-cli -e .env.local -- prisma db seed"
   },
   "dependencies": {
     "@opensearch-project/opensearch": "^3.10.0",
