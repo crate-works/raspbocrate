@@ -12,13 +12,6 @@ export const getRouter = () => {
     context: { ...rqContext },
     defaultPreload: 'intent',
     defaultErrorComponent: ({ error }) => <ErrorComponent error={error} />,
-    Wrap: (props: { children: React.ReactNode }) => {
-      return (
-        <TanstackQuery.Provider {...rqContext}>
-          {props.children}
-        </TanstackQuery.Provider>
-      );
-    },
   });
 
   setupRouterSsrQueryIntegration({
