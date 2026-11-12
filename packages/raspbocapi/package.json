@@ -22,6 +22,7 @@
     "start": "node --env-file=.env app.ts",
     "dev": "node --env-file=.env --watch app.ts",
     "lint:types": "tsc --noEmit",
+    "db:generate": "prisma generate",
     "prisma": "pnpm dlx dotenv-cli -f .env -- prisma"
   },
   "keywords": [],

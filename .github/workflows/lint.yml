@@ -37,7 +37,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma clients
-        run: pnpm -r --filter './packages/*' exec prisma generate
+        run: pnpm -r --filter './packages/*' run db:generate
 
       - name: Biome
         run: pnpm lint:biome
